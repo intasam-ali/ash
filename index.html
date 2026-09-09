@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GEN.Z GADGETS | Mobile Accessories</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Font Awesome Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="header">
+
+        <div class="container navbar">
+
+            <a href="index.html" class="logo">
+                GEN.Z <span>GADGETS</span>
+            </a>
+
+            <div class="search-box">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search mobile accessories..."
+                >
+
+                <button onclick="searchProducts()">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+
+            <div class="nav-icons">
+
+                <a href="#" title="Wishlist">
+                    <i class="fa-regular fa-heart"></i>
+                </a>
+
+                <a href="checkout.html" class="cart-icon" title="Shopping Cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span id="cartCount">0</span>
+                </a>
+
+                <button class="menu-btn" onclick="toggleMenu()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- Mobile Menu -->
+
+        <nav id="mobileMenu" class="mobile-menu">
+
+            <a href="#">Home</a>
+            <a href="#categories">Categories</a>
+            <a href="#products">Products</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+
+        </nav>
+
+    </header>
+
+
+    <!-- ================= HERO SECTION ================= -->
+
+    <section class="hero">
+
+        <div class="container hero-content">
+
+            <div class="hero-text">
+
+                <p class="small-title">
+                    YOUR TECH. YOUR STYLE.
+                </p>
+
+                <h1>
+                    Upgrade Your
+                    <span>Gadget Game.</span>
+                </h1>
+
+                <p>
+                    Discover quality mobile accessories at
+                    affordable prices.
+                </p>
+
+                <a href="#products" class="primary-btn">
+                    Shop Now
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
+
+            <div class="hero-image">
+
+                <div class="hero-circle">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= CATEGORIES ================= -->
+
+    <section class="categories-section" id="categories">
+
+        <div class="container">
+
+            <div class="section-heading">
+
+                <div>
+                    <p>SHOP BY</p>
+                    <h2>Categories</h2>
+                </div>
+
+                <a href="#">
+                    View All
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
+
+
+            <div class="categories-grid">
+
+                <div class="category-card">
+
+                    <div class="category-icon">
+                        <i class="fa-solid fa-mobile-screen"></i>
+                    </div>
+
+                    <h3>Phone Cases</h3>
+
+                    <p>Protect your phone</p>
+
+                </div>
+
+
+                <div class="category-card">
+
+                    <div class="category-icon">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+
+                    <h3>Chargers</h3>
+
+                    <p>Fast charging gear</p>
+
+                </div>
+
+
+                <div class="category-card">
+
+                    <div class="category-icon">
+                        <i class="fa-solid fa-headphones"></i>
+                    </div>
+
+                    <h3>Audio</h3>
+
+                    <p>Earbuds & headphones</p>
+
+                </div>
+
+
+                <div class="category-card">
+
+                    <div class="category-icon">
+                        <i class="fa-solid fa-battery-full"></i>
+                    </div>
+
+                    <h3>Power Banks</h3>
+
+                    <p>Power on the go</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= PRODUCTS ================= -->
+
+    <section class="products-section" id="products">
+
+        <div class="container">
+
+            <div class="section-heading">
+
+                <div>
+                    <p>OUR STORE</p>
+                    <h2>Featured Products</h2>
+                </div>
+
+                <a href="#">
+                    View All
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
+
+
+            <div class="products-grid" id="productsGrid">
+        </div>
+
+    </section>
+
+
+    <!-- ================= PROMO ================= -->
+
+    <section class="promo-section">
+
+        <div class="container promo-box">
+
+            <div>
+
+                <p>GEN.Z GADGETS</p>
+
+                <h2>
+                    Smart Accessories.
+                    <br>
+                    Better Prices.
+                </h2>
+
+                <p>
+                    Quality gadgets without breaking the bank.
+                </p>
+
+            </div>
+
+            <a href="#products" class="primary-btn">
+                Explore Products
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= ABOUT ================= -->
+
+    <section class="about-section" id="about">
+
+        <div class="container about-content">
+
+            <div>
+
+                <p class="small-title">
+                    ABOUT US
+                </p>
+
+                <h2>
+                    Your Everyday
+                    <span>Tech Store.</span>
+                </h2>
+
+            </div>
+
+            <p>
+                GEN.Z GADGETS is a Pakistan-based online store
+                focused on mobile accessories and everyday tech
+                essentials. Our goal is to provide useful products
+                at reasonable prices with a simple shopping
+                experience.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="footer" id="contact">
+
+        <div class="container footer-content">
+
+            <div>
+
+                <a href="#" class="logo footer-logo">
+                    GEN.Z <span>GADGETS</span>
+                </a>
+
+                <p>
+                    Mobile accessories for the next generation.
+                </p>
+
+            </div>
+
+
+            <div class="footer-links">
+
+                <h3>Quick Links</h3>
+
+                <a href="#">Home</a>
+                <a href="#products">Products</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+
+            </div>
+
+
+            <div class="footer-links">
+
+                <h3>Customer Support</h3>
+
+                <a href="#">
+                    Payment Help
+                </a>
+
+                <a href="#">
+                    Delivery Information
+                </a>
+
+                <a href="#">
+                    Return Policy
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="copyright">
+
+            <p>
+                © 2026 GEN.Z GADGETS. All rights reserved.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+    <!-- ================= WHATSAPP ================= -->
+
+    <a
+        href="https://wa.me/923197745919?text=Assalam-o-Alaikum%20GEN.Z%20GADGETS%2C%20mujhe%20help%20chahiye."
+        class="whatsapp-btn"
+        target="_blank"
+        aria-label="Contact GEN.Z GADGETS on WhatsApp"
+    >
+
+        <i class="fa-brands fa-whatsapp"></i>
+
+        <span>
+            WhatsApp Us
+        </span>
+
+    </a>
+
+
+    <!-- JavaScript -->
+
+    <script src="js/products.js"></script>
+    <script src="js/script.js"></script>
+
+</body>
+</html>

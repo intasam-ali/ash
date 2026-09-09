@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Product Details | GEN.Z GADGETS</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="header">
+
+        <div class="container navbar">
+
+            <a href="index.html" class="logo">
+                GEN.Z <span>GADGETS</span>
+            </a>
+
+            <div class="search-box">
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search mobile accessories..."
+                >
+
+                <button onclick="goToHomeSearch()">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+
+            </div>
+
+            <div class="nav-icons">
+
+                <a href="#" title="Wishlist">
+                    <i class="fa-regular fa-heart"></i>
+                </a>
+
+                <a href="#" class="cart-icon" title="Shopping Cart">
+
+                    <i class="fa-solid fa-cart-shopping"></i>
+
+                    <span id="cartCount">0</span>
+
+                </a>
+
+                <button class="menu-btn" onclick="toggleMenu()">
+
+                    <i class="fa-solid fa-bars"></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- Mobile Menu -->
+
+        <nav id="mobileMenu" class="mobile-menu">
+
+            <a href="index.html">Home</a>
+
+            <a href="index.html#categories">
+                Categories
+            </a>
+
+            <a href="index.html#products">
+                Products
+            </a>
+
+            <a href="index.html#about">
+                About
+            </a>
+
+            <a href="index.html#contact">
+                Contact
+            </a>
+
+        </nav>
+
+    </header>
+
+
+    <!-- ================= PRODUCT DETAILS ================= -->
+
+    <main class="product-details-section">
+
+        <div class="container">
+
+            <a href="index.html" class="back-link">
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                Back to Products
+
+            </a>
+
+
+            <div
+                class="product-details"
+                id="productDetails"
+            >
+
+                <!-- Product will load here -->
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- ================= WHATSAPP ================= -->
+
+    <a
+        href="https://wa.me/?923197745919text=Assalam-o-Alaikum%20GEN.Z%20GADGETS%2C%20mujhe%20product%20ke%20baray%20mein%20help%20chahiye."
+        class="whatsapp-btn"
+        target="_blank"
+        aria-label="Contact GEN.Z GADGETS on WhatsApp"
+    >
+
+        <i class="fa-brands fa-whatsapp"></i>
+
+        <span>
+            WhatsApp Us
+        </span>
+
+    </a>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script src="js/products.js"></script>
+    <script src="js/script.js"></script>
+
+</body>
+</html>

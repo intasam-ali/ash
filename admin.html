@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Admin Panel | GEN.Z GADGETS</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- =========================
+         ADMIN HEADER
+    ========================== -->
+
+    <header class="admin-header">
+
+        <div class="admin-header-inner">
+    <a href="../index.html" class="admin-logo">
+        GEN.Z <span>GADGETS</span>
+    </a>
+    
+    <div style="display:flex; gap:15px; align-items:center;">
+        <a href="admin.html" style="color:#64748b; text-decoration:none; font-weight:600;">
+            <i class="fa-solid fa-box"></i> Products
+        </a>
+        <a href="admin-orders.html" style="color:#7c3aed; text-decoration:none; font-weight:600;">
+            <i class="fa-solid fa-receipt"></i> Orders
+            <span id="adminOrderBadge" style="background:#ef4444; color:white; padding:1px 8px; border-radius:20px; font-size:11px; margin-left:4px;">0</span>
+        </a>
+        <a href="../index.html" class="view-store-btn" style="background:#7c3aed; color:white; padding:8px 18px; border-radius:8px; text-decoration:none; font-weight:600;">
+            <i class="fa-solid fa-store"></i>
+            View Store
+        </a>
+    </div>
+</div>
+
+    </header>
+
+
+    <!-- =========================
+         ADMIN MAIN
+    ========================== -->
+
+    <main class="admin-container">
+
+        <div class="admin-title">
+
+            <div>
+
+                <p class="admin-small-title">
+                    STORE MANAGEMENT
+                </p>
+
+                <h1>
+                    Admin Dashboard
+                </h1>
+
+                <p>
+                    Manage your GEN.Z GADGETS products.
+                </p>
+
+            </div>
+
+
+            <button
+                class="admin-add-btn"
+                onclick="openProductForm()"
+            >
+
+                <i class="fa-solid fa-plus"></i>
+
+                Add Product
+
+            </button>
+
+        </div>
+
+
+        <!-- =========================
+             STATISTICS
+        ========================== -->
+
+        <div class="admin-stats">
+
+            <div class="admin-stat-card">
+
+                <i class="fa-solid fa-box"></i>
+
+                <div>
+
+                    <span>
+                        Total Products
+                    </span>
+
+                    <strong id="totalProducts">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="admin-stat-card">
+
+                <i class="fa-solid fa-circle-check"></i>
+
+                <div>
+
+                    <span>
+                        Active Products
+                    </span>
+
+                    <strong id="activeProducts">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="admin-stat-card">
+
+                <i class="fa-solid fa-boxes-stacked"></i>
+
+                <div>
+
+                    <span>
+                        Total Stock
+                    </span>
+
+                    <strong id="totalStock">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             PRODUCT FORM
+        ========================== -->
+
+        <section
+            id="productFormSection"
+            class="admin-form-section"
+            style="display:none;"
+        >
+
+            <div class="admin-form-header">
+
+                <div>
+
+                    <p class="admin-small-title">
+                        PRODUCT
+                    </p>
+
+                    <h2 id="formTitle">
+                        Add New Product
+                    </h2>
+
+                </div>
+
+                <button
+                    class="admin-close-btn"
+                    onclick="closeProductForm()"
+                >
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+
+
+            <form id="productForm">
+
+
+                <input
+                    type="hidden"
+                    id="productId"
+                >
+
+
+                <div class="admin-form-grid">
+
+
+                    <!-- Product Name -->
+
+                    <div class="admin-field">
+
+                        <label>
+                            Product Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="productName"
+                            placeholder="e.g. Wireless Earbuds"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Category -->
+
+                    <div class="admin-field">
+
+                        <label>
+                            Category
+                        </label>
+
+                        <input
+                            type="text"
+                            id="productCategory"
+                            placeholder="e.g. Audio"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Price -->
+
+                    <div class="admin-field">
+
+                        <label>
+                            Price (Rs.)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="productPrice"
+                            placeholder="2499"
+                            min="0"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Old Price -->
+
+                    <div class="admin-field">
+
+                        <label>
+                            Old Price (Optional)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="productOldPrice"
+                            placeholder="3499"
+                            min="0"
+                        >
+
+                    </div>
+
+
+                    <!-- Stock -->
+
+                    <div class="admin-field">
+
+                        <label>
+                            Stock
+                        </label>
+
+                        <input
+                            type="number"
+                            id="productStock"
+                            placeholder="20"
+                            min="0"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Rating -->
+
+                    <div class="admin-field">
+
+                        <label>
+                            Rating
+                        </label>
+
+                        <select id="productRating">
+
+                            <option value="5">
+                                5 Stars
+                            </option>
+
+                            <option value="4">
+                                4 Stars
+                            </option>
+
+                            <option value="3">
+                                3 Stars
+                            </option>
+
+                            <option value="2">
+                                2 Stars
+                            </option>
+
+                            <option value="1">
+                                1 Star
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Reviews -->
+
+                    <div class="admin-field">
+
+                        <label>
+                            Reviews
+                        </label>
+
+                        <input
+                            type="number"
+                            id="productReviews"
+                            value="0"
+                            min="0"
+                        >
+
+                    </div>
+
+
+                    <!-- Badge -->
+
+                    <div class="admin-field">
+
+                        <label>
+                            Badge
+                        </label>
+
+                        <select id="productBadge">
+
+                            <option value="">
+                                No Badge
+                            </option>
+
+                            <option value="NEW">
+                                NEW
+                            </option>
+
+                            <option value="SALE">
+                                SALE
+                            </option>
+
+                            <option value="HOT">
+                                HOT
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                   <!-- Image URL -->
+<div class="admin-field">
+    <label>Product Image URL</label>
+    <input type="url" id="productImage" placeholder="https://example.com/product-image.jpg">
+    <small style="color:#94a3b8; display:block; margin-top:5px;">
+        Use free images from: 
+        <a href="https://unsplash.com" target="_blank" style="color:#7c3aed;">Unsplash</a>, 
+        <a href="https://pixabay.com" target="_blank" style="color:#7c3aed;">Pixabay</a>, or 
+        <a href="https://www.pexels.com" target="_blank" style="color:#7c3aed;">Pexels</a>
+    </small>
+</div>
+
+<!-- Icon (keep as fallback) -->
+<div class="admin-field">
+    <label>Product Icon (Fallback)</label>
+    <select id="productIcon">
+        <option value="fa-headphones">Headphones</option>
+        <option value="fa-bolt">Charger</option>
+        <option value="fa-battery-full">Power Bank</option>
+        <option value="fa-mobile-screen">Phone Case</option>
+        <option value="fa-mobile">Mobile</option>
+        <option value="fa-cable-car">Cable</option>
+        <option value="fa-watch">Smart Watch</option>
+    </select>
+</div>
+
+
+                    <!-- Description -->
+
+                    <div class="admin-field admin-field-full">
+
+                        <label>
+                            Description
+                        </label>
+
+                        <textarea
+                            id="productDescription"
+                            rows="5"
+                            placeholder="Write product description..."
+                            required
+                        ></textarea>
+
+                    </div>
+
+
+                    <!-- Active Status -->
+
+                    <div class="admin-field admin-field-full">
+
+                        <label class="admin-checkbox-label">
+
+                            <input
+                                type="checkbox"
+                                id="productActive"
+                                checked
+                            >
+
+                            <span>
+                                Product is Active
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Form Buttons -->
+
+                <div class="admin-form-actions">
+
+                    <button
+                        type="button"
+                        class="admin-cancel-btn"
+                        onclick="closeProductForm()"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="admin-save-btn"
+                    >
+
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Save Product
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- =========================
+             PRODUCTS TABLE
+        ========================== -->
+
+        <section class="admin-products-section">
+
+            <div class="admin-section-header">
+
+                <div>
+
+                    <h2>
+                        Products
+                    </h2>
+
+                    <p>
+                        Edit or manage your products.
+                    </p>
+
+                </div>
+
+
+                <div class="admin-search">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                    <input
+                        type="text"
+                        id="adminSearch"
+                        placeholder="Search products..."
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="admin-table-wrapper">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Product
+                            </th>
+
+                            <th>
+                                Category
+                            </th>
+
+                            <th>
+                                Price
+                            </th>
+
+                            <th>
+                                Stock
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="adminProductsTable">
+
+                        <!-- Products load here -->
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script src="../js/products.js"></script>
+
+    <script src="../js/admin.js"></script>
+<script>
+    // Update order badge in admin header
+    function updateAdminOrderBadge() {
+        const orders = JSON.parse(localStorage.getItem('genzOrders')) || [];
+        const pending = orders.filter(o => o.status === 'Pending').length;
+        const badge = document.getElementById('adminOrderBadge');
+        if (badge) {
+            badge.textContent = pending;
+            badge.style.display = pending > 0 ? 'inline' : 'none';
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', updateAdminOrderBadge);
+</script>
+</body>
+
+</html>
+<!-- Admin Login -->
+<script>
+    function checkAdminLogin() {
+        const password = prompt('Enter Admin Password:');
+        if (password !== 'genz123') {
+            alert('Wrong Password!');
+            window.location.href = 'index.html';
+            return false;
+        }
+        return true;
+    }
+    
+    // Page load par password maangein
+    if (!checkAdminLogin()) {
+        // Redirect
+    }
+</script>
