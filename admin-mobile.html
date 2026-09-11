@@ -1,407 +1,145 @@
-const JSONBIN_BIN_ID = '6aa3ebcbffd5d16053f9fa9f';
-const JSONBIN_API_KEY = '$2a$10$zZbnaYmlPLZ9iEI4zU83iO1GeTDajOnnoa9dJvr3WewY22z.YrXRq';
-const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
-
-let products = [];
-let editingId = null;
-
-async function fetchProductsFromServer() {
-    try {
-        const response = await fetch(`${JSONBIN_URL}/latest`, {
-            headers: { 'X-Master-Key': JSONBIN_API_KEY }
-        });
-        const data = await response.json();
-        if (data.record && Array.isArray(data.record)) {
-            localStorage.setItem('genzProducts', JSON.stringify(data.record));
-            products = data.record;
-            renderProducts();
-            updateStats();
-        }
-    } catch (error) {
-        console.error('Fetch error:', error);
-    }
-}
-
-async function saveProductsToServer(data) {
-    try {
-        const response = await fetch(JSONBIN_URL, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Master-Key': JSONBIN_API_KEY
-            },
-            body: JSON.stringify(data)
-        });
-        return response.ok;
-    } catch (error) {
-        return false;
-    }
-}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Admin Mobile | GEN.Z GADGETS</title>
-    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f7fa;
-            padding-bottom: 80px;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; padding-bottom: 80px; }
+
         .mobile-header {
-            background: #111827;
-            color: white;
-            padding: 15px 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: #111827; color: white; padding: 15px 20px;
+            position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
         }
-        
-        .mobile-header .logo {
-            font-size: 20px;
-            font-weight: 900;
-        }
-        
-        .mobile-header .logo span {
-            color: #7c3aed;
-        }
-        
-        .mobile-header a {
-            color: #94a3b8;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        
-        .mobile-container {
-            padding: 15px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        
+        .mobile-header .logo { font-size: 20px; font-weight: 900; }
+        .mobile-header .logo span { color: #7c3aed; }
+        .mobile-header a { color: #94a3b8; text-decoration: none; font-size: 14px; }
+
+        .mobile-container { padding: 15px; max-width: 500px; margin: 0 auto; }
+
         .mobile-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px; margin-bottom: 20px;
         }
-        
         .mobile-stat {
-            background: white;
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            background: white; border-radius: 12px; padding: 15px;
+            text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
-        
-        .mobile-stat .num {
-            font-size: 24px;
-            font-weight: 900;
-            color: #111827;
-            display: block;
-        }
-        
-        .mobile-stat .label {
-            font-size: 11px;
-            color: #94a3b8;
-        }
-        
+        .mobile-stat .num { font-size: 24px; font-weight: 900; color: #111827; display: block; }
+        .mobile-stat .label { font-size: 11px; color: #94a3b8; }
+
         .mobile-product-item {
-            background: white;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: white; border-radius: 12px; padding: 15px;
+            margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            display: flex; justify-content: space-between; align-items: center;
         }
-        
-        .mobile-product-item .info {
-            flex: 1;
-        }
-        
-        .mobile-product-item .info h4 {
-            font-size: 15px;
-            margin-bottom: 3px;
-        }
-        
-        .mobile-product-item .info .category {
-            font-size: 12px;
-            color: #7c3aed;
-            font-weight: 600;
-        }
-        
-        .mobile-product-item .info .price {
-            font-size: 14px;
-            font-weight: 700;
-        }
-        
-        .mobile-product-item .actions {
-            display: flex;
-            gap: 8px;
-        }
-        
+        .mobile-product-item .info { flex: 1; }
+        .mobile-product-item .info h4 { font-size: 15px; margin-bottom: 3px; }
+        .mobile-product-item .info .category { font-size: 12px; color: #7c3aed; font-weight: 600; }
+        .mobile-product-item .info .price { font-size: 14px; font-weight: 700; }
+        .mobile-product-item .actions { display: flex; gap: 8px; }
         .mobile-product-item .actions button {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
+            padding: 8px 12px; border: none; border-radius: 8px;
+            cursor: pointer; font-size: 14px;
         }
-        
-        .mobile-product-item .actions .edit {
-            background: #ede9fe;
-            color: #7c3aed;
-        }
-        
-        .mobile-product-item .actions .delete {
-            background: #fee2e2;
-            color: #dc2626;
-        }
-        
+        .mobile-product-item .actions .edit { background: #ede9fe; color: #7c3aed; }
+        .mobile-product-item .actions .delete { background: #fee2e2; color: #dc2626; }
+
         .mobile-fab {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: #7c3aed;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 28px;
+            position: fixed; bottom: 20px; right: 20px;
+            width: 60px; height: 60px; background: #7c3aed; color: white;
+            border: none; border-radius: 50%; font-size: 28px;
             box-shadow: 0 4px 20px rgba(124,58,237,0.4);
-            cursor: pointer;
-            z-index: 99;
+            cursor: pointer; z-index: 99;
         }
-        
-        .mobile-fab:active {
-            transform: scale(0.95);
-        }
-        
+        .mobile-fab:active { transform: scale(0.95); }
+
         .mobile-form {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            background: white; border-radius: 16px; padding: 20px;
+            margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             display: none;
         }
-        
-        .mobile-form.active {
-            display: block;
-        }
-        
-        .mobile-form .form-group {
-            margin-bottom: 12px;
-        }
-        
+        .mobile-form.active { display: block; }
+        .mobile-form .form-group { margin-bottom: 12px; }
         .mobile-form .form-group label {
-            font-size: 13px;
-            font-weight: 600;
-            display: block;
-            margin-bottom: 4px;
+            font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;
         }
-        
         .mobile-form .form-group input,
         .mobile-form .form-group textarea,
         .mobile-form .form-group select {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            background: #f8fafc;
+            width: 100%; padding: 10px 12px; border: 1px solid #d1d5db;
+            border-radius: 8px; font-size: 14px; background: #f8fafc;
         }
-        
         .mobile-form .form-group input:focus,
         .mobile-form .form-group textarea:focus {
-            outline: none;
-            border-color: #7c3aed;
+            outline: none; border-color: #7c3aed;
         }
-        
-        .mobile-form .form-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
+        .mobile-form .form-actions { display: flex; gap: 10px; }
         .mobile-form .form-actions button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
+            flex: 1; padding: 12px; border: none; border-radius: 10px;
+            font-weight: 700; font-size: 15px; cursor: pointer;
         }
-        
-        .mobile-form .form-actions .save {
-            background: #7c3aed;
-            color: white;
-        }
-        
-        .mobile-form .form-actions .cancel {
-            background: #f1f5f9;
-            color: #64748b;
-        }
-        
+        .mobile-form .form-actions .save { background: #7c3aed; color: white; }
+        .mobile-form .form-actions .cancel { background: #f1f5f9; color: #64748b; }
+
         .mobile-search {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #d1d5db;
-            border-radius: 10px;
-            font-size: 14px;
-            margin-bottom: 15px;
-            background: white;
+            width: 100%; padding: 12px 15px; border: 1px solid #d1d5db;
+            border-radius: 10px; font-size: 14px; margin-bottom: 15px; background: white;
         }
-        
-        .mobile-empty {
-            text-align: center;
-            padding: 40px 20px;
-            color: #94a3b8;
-        }
-        
-        .mobile-empty i {
-            font-size: 40px;
-            display: block;
-            margin-bottom: 10px;
-        }
-        
+
+        .mobile-empty { text-align: center; padding: 40px 20px; color: #94a3b8; }
+        .mobile-empty i { font-size: 40px; display: block; margin-bottom: 10px; }
+
         .status-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 5px;
+            display: inline-block; width: 8px; height: 8px;
+            border-radius: 50%; margin-right: 5px;
         }
-        
-        .status-dot.active {
-            background: #22c55e;
-        }
-        
-        .status-dot.inactive {
-            background: #ef4444;
-        }
-        
+        .status-dot.active { background: #22c55e; }
+        .status-dot.inactive { background: #ef4444; }
+
         .toast {
-            position: fixed;
-            bottom: 90px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #111827;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 600;
-            z-index: 999;
-            display: none;
-            max-width: 90%;
-            text-align: center;
+            position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+            background: #111827; color: white; padding: 12px 24px;
+            border-radius: 12px; font-weight: 600; z-index: 999;
+            display: none; max-width: 90%; text-align: center;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
-        
-        .toast.show {
-            display: block;
-            animation: slideUp 0.3s ease;
-        }
-        
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
+        .toast.show { display: block; }
 
         .image-help-box {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            border-radius: 10px;
-            padding: 12px;
-            margin-top: 8px;
+            background: #f0fdf4; border: 1px solid #bbf7d0;
+            border-radius: 10px; padding: 12px; margin-top: 8px;
         }
+        .image-help-box h4 { color: #166534; font-size: 13px; margin-bottom: 6px; }
+        .image-help-box ol { color: #166534; font-size: 12px; padding-left: 20px; margin: 5px 0; }
+        .image-help-box ol li { margin-bottom: 3px; }
+        .image-help-box a { color: #7c3aed; font-weight: 600; }
 
-        .image-help-box h4 {
-            color: #166534;
-            font-size: 13px;
-            margin-bottom: 6px;
-        }
-
-        .image-help-box ol {
-            color: #166534;
-            font-size: 12px;
-            padding-left: 20px;
-            margin: 5px 0;
-        }
-
-        .image-help-box ol li {
-            margin-bottom: 3px;
-        }
-
-        .image-help-box a {
-            color: #7c3aed;
-            font-weight: 600;
-        }
-
-        .image-url-input {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .image-url-input input {
-            flex: 1;
-            min-width: 150px;
-        }
-
+        .image-url-input { display: flex; gap: 8px; flex-wrap: wrap; }
+        .image-url-input input { flex: 1; min-width: 150px; }
         .image-url-input button {
-            background: #22c55e;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 15px;
-            cursor: pointer;
-            font-weight: 600;
-            white-space: nowrap;
+            background: #22c55e; color: white; border: none;
+            border-radius: 8px; padding: 10px 15px; cursor: pointer;
+            font-weight: 600; white-space: nowrap;
         }
 
-        .image-preview {
-            display: none;
-            margin-top: 8px;
-        }
-        
+        .image-preview { display: none; margin-top: 8px; }
         .image-preview img {
-            max-width: 120px;
-            max-height: 120px;
-            border-radius: 10px;
-            border: 2px solid #e2e8f0;
+            max-width: 120px; max-height: 120px;
+            border-radius: 10px; border: 2px solid #e2e8f0;
         }
-        
         .image-preview .remove-btn {
-            background: #fee2e2;
-            color: #dc2626;
-            border: none;
-            border-radius: 6px;
-            padding: 4px 12px;
-            margin-top: 5px;
-            font-size: 12px;
-            cursor: pointer;
+            background: #fee2e2; color: #dc2626; border: none;
+            border-radius: 6px; padding: 4px 12px; margin-top: 5px;
+            font-size: 12px; cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <!-- Mobile Header -->
     <div class="mobile-header">
         <div class="logo">GEN.Z <span>GADGETS</span></div>
         <div style="display:flex; gap:15px; align-items:center;">
@@ -413,8 +151,7 @@ async function saveProductsToServer(data) {
     </div>
 
     <div class="mobile-container" id="app">
-        
-        <!-- Stats -->
+
         <div class="mobile-stats">
             <div class="mobile-stat">
                 <span class="num" id="totalCount">0</span>
@@ -430,39 +167,37 @@ async function saveProductsToServer(data) {
             </div>
         </div>
 
-        <!-- Search -->
         <input type="text" class="mobile-search" id="mobileSearch" placeholder="🔍 Search products..." oninput="searchProducts(this.value)">
 
-        <!-- Product Form -->
         <div class="mobile-form" id="productForm">
             <h3 id="formTitle" style="margin-bottom:15px;">Add New Product</h3>
             <input type="hidden" id="editId">
-            
+
             <div class="form-group">
                 <label>Product Name *</label>
                 <input type="text" id="pName" placeholder="e.g. Wireless Earbuds">
             </div>
-            
+
             <div class="form-group">
                 <label>Category *</label>
                 <input type="text" id="pCategory" placeholder="e.g. Audio">
             </div>
-            
+
             <div class="form-group">
                 <label>Price (Rs.) *</label>
                 <input type="number" id="pPrice" placeholder="2499">
             </div>
-            
+
             <div class="form-group">
                 <label>Old Price (Optional)</label>
                 <input type="number" id="pOldPrice" placeholder="3499">
             </div>
-            
+
             <div class="form-group">
                 <label>Stock</label>
                 <input type="number" id="pStock" placeholder="20" value="10">
             </div>
-            
+
             <div class="form-group">
                 <label>Rating</label>
                 <select id="pRating">
@@ -473,7 +208,7 @@ async function saveProductsToServer(data) {
                     <option value="1">★☆☆☆☆ (1 Star)</option>
                 </select>
             </div>
-            
+
             <div class="form-group">
                 <label>Badge</label>
                 <select id="pBadge">
@@ -483,17 +218,15 @@ async function saveProductsToServer(data) {
                     <option value="HOT">⚡ HOT</option>
                 </select>
             </div>
-            
+
             <div class="form-group">
                 <label>Product Image URL</label>
-                
                 <div class="image-url-input">
                     <input type="url" id="pImage" placeholder="https://example.com/image.jpg">
                     <button type="button" onclick="openImageHost()">
                         <i class="fa-solid fa-upload"></i> Get Image
                     </button>
                 </div>
-                
                 <div class="image-preview" id="mobileImagePreview">
                     <img id="mobilePreviewImg" src="" alt="Preview">
                     <br>
@@ -501,7 +234,6 @@ async function saveProductsToServer(data) {
                         <i class="fa-solid fa-xmark"></i> Remove
                     </button>
                 </div>
-
                 <div class="image-help-box">
                     <h4>📸 How to add image from mobile:</h4>
                     <ol>
@@ -513,134 +245,159 @@ async function saveProductsToServer(data) {
                         <li>Paste it in the Image URL field above</li>
                     </ol>
                 </div>
-                
                 <small style="color:#94a3b8; display:block; margin-top:4px; font-size:12px;">
                     💡 Tip: PostImages works great on mobile!
                 </small>
             </div>
-            
+
             <div class="form-group">
                 <label>Description</label>
                 <textarea id="pDescription" rows="3" placeholder="Product description..."></textarea>
             </div>
-            
+
             <div class="form-group">
                 <label style="display:flex; align-items:center; gap:10px;">
                     <input type="checkbox" id="pActive" checked>
                     Product is Active (visible on store)
                 </label>
             </div>
-            
+
             <div class="form-actions">
                 <button class="cancel" onclick="closeForm()">Cancel</button>
                 <button class="save" onclick="saveProduct()"><i class="fa-solid fa-floppy-disk"></i> Save</button>
             </div>
         </div>
 
-        <!-- Product List -->
-        <div id="productList">
-            <!-- Products load here -->
-        </div>
+        <div id="productList"></div>
     </div>
 
-    <!-- FAB Button -->
     <button class="mobile-fab" onclick="openForm()">
         <i class="fa-solid fa-plus"></i>
     </button>
 
-    <!-- Toast -->
     <div class="toast" id="toast"></div>
 
     <script>
         // ========================================
-        // ADMIN MOBILE JAVASCRIPT
+        // CONFIG - JSONBIN
         // ========================================
+        const JSONBIN_BIN_ID = '6aa3ebcbffd5d16053f9fa9f';
+        const JSONBIN_API_KEY = '$2a$10$zZbnaYmlPLZ9iEI4zU83iO1GeTDajOnnoa9dJvr3WewY22z.YrXRq';
+        const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/' + JSONBIN_BIN_ID;
 
+        // ========================================
+        // GLOBAL VARIABLES
+        // ========================================
         let products = [];
         let editingId = null;
 
-        // ===== GET PRODUCTS =====
+        // ========================================
+        // SERVER FUNCTIONS
+        // ========================================
+        async function fetchProductsFromServer() {
+            try {
+                const response = await fetch(JSONBIN_URL + '/latest', {
+                    headers: { 'X-Master-Key': JSONBIN_API_KEY }
+                });
+                const data = await response.json();
+                if (data.record && Array.isArray(data.record)) {
+                    localStorage.setItem('genzProducts', JSON.stringify(data.record));
+                    products = data.record;
+                    renderProducts();
+                    updateStats();
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        }
+
+        async function saveProductsToServer(data) {
+            try {
+                const response = await fetch(JSONBIN_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': JSONBIN_API_KEY
+                    },
+                    body: JSON.stringify(data)
+                });
+                return response.ok;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        // ========================================
+        // LOCAL FUNCTIONS
+        // ========================================
         function getProducts() {
             const saved = localStorage.getItem('genzProducts');
             if (saved) {
-                try {
-                    return JSON.parse(saved);
-                } catch(e) {
-                    return [];
-                }
+                try { return JSON.parse(saved); } catch(e) { return []; }
             }
             return [];
         }
-async function saveProducts(data) {
-    localStorage.setItem('genzProducts', JSON.stringify(data));
-    products = data;
-    renderProducts();
-    updateStats();
-    
-    showToast('📤 Saving...');
-    const saved = await saveProductsToServer(data);
-    if (saved) {
-        showToast('✅ Server par save ho gaya!');
-    } else {
-        showToast('⚠️ Sirf mobile par save hua');
-    }
-}
-        // ===== RENDER PRODUCTS =====
-        function renderProducts(list = null) {
-            const container = document.getElementById('productList');
-            const data = list || products;
 
-            if (data.length === 0) {
-                container.innerHTML = `
-                    <div class="mobile-empty">
-                        <i class="fa-solid fa-box-open"></i>
-                        <p>No products yet.</p>
-                        <p style="font-size:13px; color:#94a3b8;">Tap the + button to add your first product!</p>
-                    </div>
-                `;
+        async function saveProducts(data) {
+            localStorage.setItem('genzProducts', JSON.stringify(data));
+            products = data;
+            renderProducts();
+            updateStats();
+
+            showToast('📤 Saving...');
+            const saved = await saveProductsToServer(data);
+            if (saved) {
+                showToast('✅ Server par save ho gaya!');
+            } else {
+                showToast('⚠️ Sirf mobile par save hua');
+            }
+        }
+
+        function renderProducts(list) {
+            if (!list) list = products;
+            const container = document.getElementById('productList');
+
+            if (list.length === 0) {
+                container.innerHTML = '<div class="mobile-empty">' +
+                    '<i class="fa-solid fa-box-open"></i>' +
+                    '<p>No products yet.</p>' +
+                    '<p style="font-size:13px;">Tap the + button to add one!</p></div>';
                 return;
             }
 
-            container.innerHTML = data.map(p => `
-                <div class="mobile-product-item">
-                    <div class="info">
-                        <h4>
-                            <span class="status-dot ${p.active !== false ? 'active' : 'inactive'}"></span>
-                            ${p.name}
-                        </h4>
-                        <div class="category">${p.category}</div>
-                        <div class="price">Rs. ${Number(p.price).toLocaleString()}</div>
-                        <div style="font-size:12px; color:#94a3b8;">Stock: ${p.stock || 0}</div>
-                        ${p.image ? `<div style="font-size:11px; color:#22c55e;"><i class="fa-solid fa-image"></i> Has image</div>` : ''}
-                    </div>
-                    <div class="actions">
-                        <button class="edit" onclick="editProduct(${p.id})">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <button class="delete" onclick="deleteProduct(${p.id})">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+            let html = '';
+            list.forEach(function(p) {
+                html += '<div class="mobile-product-item">' +
+                    '<div class="info">' +
+                        '<h4><span class="status-dot ' + (p.active !== false ? 'active' : 'inactive') + '"></span>' + p.name + '</h4>' +
+                        '<div class="category">' + p.category + '</div>' +
+                        '<div class="price">Rs. ' + Number(p.price).toLocaleString() + '</div>' +
+                        '<div style="font-size:12px; color:#94a3b8;">Stock: ' + (p.stock || 0) + '</div>' +
+                        (p.image ? '<div style="font-size:11px; color:#22c55e;"><i class="fa-solid fa-image"></i> Has image</div>' : '') +
+                    '</div>' +
+                    '<div class="actions">' +
+                        '<button class="edit" onclick="editProduct(' + p.id + ')"><i class="fa-solid fa-pen"></i></button>' +
+                        '<button class="delete" onclick="deleteProduct(' + p.id + ')"><i class="fa-solid fa-trash"></i></button>' +
+                    '</div>' +
+                '</div>';
+            });
+            container.innerHTML = html;
         }
 
-        // ===== UPDATE STATS =====
         function updateStats() {
             const total = products.length;
-            const active = products.filter(p => p.active !== false).length;
-            const stock = products.reduce((sum, p) => sum + Number(p.stock || 0), 0);
-            
+            const active = products.filter(function(p) { return p.active !== false; }).length;
+            const stock = products.reduce(function(sum, p) { return sum + Number(p.stock || 0); }, 0);
+
             document.getElementById('totalCount').textContent = total;
             document.getElementById('activeCount').textContent = active;
             document.getElementById('stockCount').textContent = stock;
         }
 
-        // ===== OPEN FORM =====
-        function openForm(product = null) {
+        function openForm(product) {
             const form = document.getElementById('productForm');
             form.classList.add('active');
-            
+
             if (product) {
                 document.getElementById('formTitle').textContent = '✏️ Edit Product';
                 document.getElementById('editId').value = product.id;
@@ -655,12 +412,10 @@ async function saveProducts(data) {
                 document.getElementById('pDescription').value = product.description || '';
                 document.getElementById('pActive').checked = product.active !== false;
                 editingId = product.id;
-                
-                // Show existing image
+
                 if (product.image) {
-                    const preview = document.getElementById('mobileImagePreview');
                     document.getElementById('mobilePreviewImg').src = product.image;
-                    preview.style.display = 'block';
+                    document.getElementById('mobileImagePreview').style.display = 'block';
                 }
             } else {
                 document.getElementById('formTitle').textContent = '➕ Add New Product';
@@ -678,18 +433,16 @@ async function saveProducts(data) {
                 document.getElementById('mobileImagePreview').style.display = 'none';
                 editingId = null;
             }
-            
+
             form.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // ===== CLOSE FORM =====
         function closeForm() {
             document.getElementById('productForm').classList.remove('active');
             document.getElementById('mobileImagePreview').style.display = 'none';
         }
 
-        // ===== SAVE PRODUCT =====
-        function saveProduct() {
+        async function saveProduct() {
             const name = document.getElementById('pName').value.trim();
             const category = document.getElementById('pCategory').value.trim();
             const price = Number(document.getElementById('pPrice').value);
@@ -701,113 +454,110 @@ async function saveProducts(data) {
             const description = document.getElementById('pDescription').value.trim();
             const active = document.getElementById('pActive').checked;
 
-            // Validation
             if (!name) { showToast('❌ Please enter product name'); return; }
             if (!category) { showToast('❌ Please enter category'); return; }
             if (!price || price <= 0) { showToast('❌ Please enter valid price'); return; }
 
-            let products = getProducts();
+            let list = getProducts();
             const editId = document.getElementById('editId').value;
 
             if (editId) {
-                // Edit existing
-                const index = products.findIndex(p => p.id === Number(editId));
+                const index = list.findIndex(function(p) { return p.id === Number(editId); });
                 if (index !== -1) {
-                    products[index] = {
-                        ...products[index],
-                        name, category, price, oldPrice, stock, rating, badge, image, description, active
-                    };
+                    list[index].name = name;
+                    list[index].category = category;
+                    list[index].price = price;
+                    list[index].oldPrice = oldPrice;
+                    list[index].stock = stock;
+                    list[index].rating = rating;
+                    list[index].badge = badge;
+                    list[index].image = image;
+                    list[index].description = description;
+                    list[index].active = active;
                 }
-                showToast('✅ Product updated successfully!');
+                showToast('✅ Product updated!');
             } else {
-                // Add new
-                const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-                products.push({
-                    id: newId,
-                    name, category, price, oldPrice, stock, rating, badge, image, description, active,
-                    icon: 'fa-box',
-                    reviews: 0
+                const newId = list.length > 0 ? Math.max.apply(null, list.map(function(p) { return p.id; })) + 1 : 1;
+                list.push({
+                    id: newId, name: name, category: category, price: price,
+                    oldPrice: oldPrice, stock: stock, rating: rating, badge: badge,
+                    image: image, description: description, active: active,
+                    icon: 'fa-box', reviews: 0
                 });
-                showToast('✅ Product added successfully!');
+                showToast('✅ Product added!');
             }
 
-            saveProducts(products);
+            await saveProducts(list);
             closeForm();
         }
 
-        // ===== EDIT PRODUCT =====
         function editProduct(id) {
-            const product = products.find(p => p.id === id);
-            if (product) {
-                openForm(product);
-            }
+            const product = products.find(function(p) { return p.id === id; });
+            if (product) openForm(product);
         }
 
-        // ===== DELETE PRODUCT =====
         function deleteProduct(id) {
-            const product = products.find(p => p.id === id);
-            if (confirm(`Delete "${product?.name}"?`)) {
-                products = products.filter(p => p.id !== id);
+            const product = products.find(function(p) { return p.id === id; });
+            if (confirm('Delete "' + (product ? product.name : 'this product') + '"?')) {
+                products = products.filter(function(p) { return p.id !== id; });
                 saveProducts(products);
                 showToast('🗑️ Product deleted');
             }
         }
 
-        // ===== SEARCH PRODUCTS =====
         function searchProducts(query) {
             const data = getProducts();
-            if (!query.trim()) {
-                renderProducts(data);
-                return;
-            }
-            const filtered = data.filter(p => 
-                p.name.toLowerCase().includes(query.toLowerCase()) ||
-                p.category.toLowerCase().includes(query.toLowerCase())
-            );
+            if (!query.trim()) { renderProducts(data); return; }
+            const filtered = data.filter(function(p) {
+                return p.name.toLowerCase().includes(query.toLowerCase()) ||
+                       p.category.toLowerCase().includes(query.toLowerCase());
+            });
             renderProducts(filtered);
         }
 
-        // ===== OPEN IMAGE HOST =====
         function openImageHost() {
-            // Open PostImages in new tab
             window.open('https://postimages.org', '_blank');
-            showToast('📸 Upload your image on PostImages, then copy the "Direct Link"');
+            showToast('📸 Upload image, copy "Direct Link"');
         }
 
-        // ===== REMOVE IMAGE =====
         function removeMobileImage() {
             document.getElementById('pImage').value = '';
             document.getElementById('mobileImagePreview').style.display = 'none';
-            showToast('🖼️ Image removed');
         }
 
-        // ===== SHOW TOAST =====
         function showToast(msg) {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
             toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 4000);
+            setTimeout(function() { toast.classList.remove('show'); }, 3000);
         }
 
-        // ===== AUTO PREVIEW IMAGE =====
+        // ========================================
+        // IMAGE AUTO PREVIEW
+        // ========================================
         document.addEventListener('DOMContentLoaded', function() {
             const imageInput = document.getElementById('pImage');
             if (imageInput) {
                 imageInput.addEventListener('input', function() {
                     const url = this.value.trim();
                     if (url) {
-                        const preview = document.getElementById('mobileImagePreview');
                         document.getElementById('mobilePreviewImg').src = url;
-                        preview.style.display = 'block';
+                        document.getElementById('mobileImagePreview').style.display = 'block';
                     } else {
                         document.getElementById('mobileImagePreview').style.display = 'none';
                     }
                 });
             }
         });
-// ===== LOAD ON START =====
-fetchProductsFromServer().then(() => {
-    renderProducts();
-    updateStats();
-    console.log('✅ Mobile Admin Loaded');
-});
+
+        // ========================================
+        // START
+        // ========================================
+        fetchProductsFromServer().then(function() {
+            renderProducts();
+            updateStats();
+            console.log('✅ Mobile Admin Loaded');
+        });
+    </script>
+</body>
+</html>
