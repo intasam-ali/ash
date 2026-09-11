@@ -1,3 +1,42 @@
+const JSONBIN_BIN_ID = '6aa3ebcbffd5d16053f9fa9f';
+const JSONBIN_API_KEY = '$2a$10$zZbnaYmlPLZ9iEI4zU83iO1GeTDajOnnoa9dJvr3WewY22z.YrXRq';
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+
+let products = [];
+let editingId = null;
+
+async function fetchProductsFromServer() {
+    try {
+        const response = await fetch(`${JSONBIN_URL}/latest`, {
+            headers: { 'X-Master-Key': JSONBIN_API_KEY }
+        });
+        const data = await response.json();
+        if (data.record && Array.isArray(data.record)) {
+            localStorage.setItem('genzProducts', JSON.stringify(data.record));
+            products = data.record;
+            renderProducts();
+            updateStats();
+        }
+    } catch (error) {
+        console.error('Fetch error:', error);
+    }
+}
+
+async function saveProductsToServer(data) {
+    try {
+        const response = await fetch(JSONBIN_URL, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': JSONBIN_API_KEY
+            },
+            body: JSON.stringify(data)
+        });
+        return response.ok;
+    } catch (error) {
+        return false;
+    }
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -532,15 +571,20 @@
             }
             return [];
         }
-
-        // ===== SAVE PRODUCTS =====
-        function saveProducts(data) {
-            localStorage.setItem('genzProducts', JSON.stringify(data));
-            products = data;
-            renderProducts();
-            updateStats();
-        }
-
+async function saveProducts(data) {
+    localStorage.setItem('genzProducts', JSON.stringify(data));
+    products = data;
+    renderProducts();
+    updateStats();
+    
+    showToast('📤 Saving...');
+    const saved = await saveProductsToServer(data);
+    if (saved) {
+        showToast('✅ Server par save ho gaya!');
+    } else {
+        showToast('⚠️ Sirf mobile par save hua');
+    }
+}
         // ===== RENDER PRODUCTS =====
         function renderProducts(list = null) {
             const container = document.getElementById('productList');
@@ -761,13 +805,9 @@
                 });
             }
         });
-
-        // ===== LOAD ON START =====
-        products = getProducts();
-        renderProducts();
-        updateStats();
-        console.log('✅ Mobile Admin Loaded');
-    </script>
-
-</body>
-</html>
+// ===== LOAD ON START =====
+fetchProductsFromServer().then(() => {
+    renderProducts();
+    updateStats();
+    console.log('✅ Mobile Admin Loaded');
+});
