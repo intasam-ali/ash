@@ -7,9 +7,6 @@ const JSONBIN_BIN_ID = '6aa40459ffd5d16053fa4a09';
 const JSONBIN_API_KEY = '$2a$10$zZbnaYmlPLZ9iEI4zU83iO1GeTDajOnnoa9dJvr3WewY22z.YrXRq';
 const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/' + JSONBIN_BIN_ID;
 
-/* =========================
-   FETCH FROM SERVER
-========================= */
 async function fetchProductsFromServer() {
     try {
         const response = await fetch(JSONBIN_URL + '/latest', {
@@ -28,9 +25,6 @@ async function fetchProductsFromServer() {
     }
 }
 
-/* =========================
-   GET PRODUCTS (sync from cache)
-========================= */
 function getProducts() {
     const cached = localStorage.getItem('genzProducts');
     if (cached) {
