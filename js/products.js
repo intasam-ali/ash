@@ -106,6 +106,6 @@ function getActiveProducts() {
     return getProducts().filter(function(p) { return p.active !== false; });
 }
 
-const products = [];
+let products = [];
 
 console.log('✅ PRODUCTS JS LOADED (Firebase version)');
