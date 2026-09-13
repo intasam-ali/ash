@@ -213,7 +213,7 @@
             }
 
             const subtotal = cartItems.reduce(function(sum, item) { return sum + (item.price * item.quantity); }, 0);
-            const deliveryFee = subtotal >= 9000 ? 0 : 200;
+            const deliveryFee = subtotal >= 9000 ? 0 : 350;
             const total = subtotal + deliveryFee;
 
             container.innerHTML = `
@@ -352,8 +352,8 @@
                             <p>
                                 <i class="fa-solid fa-truck"></i>
                                 ${subtotal >= 9000 
-                                    ? '✅ <strong>Free delivery applied!</strong>' 
-                                    : '🚚 Free delivery on orders above <strong>Rs. 9,000</strong>'}
+                                    ? '✅ <strong>Free delivery applied (All over Pakistan)</strong>' 
+                                    : '🚚 Free delivery on orders above <strong>Rs. 9,000</strong> — All over Pakistan'}
                             </p>
                         </div>
                     </div>
@@ -408,7 +408,7 @@
             }
 
             const subtotal = cartItems.reduce(function(sum, item) { return sum + (item.price * item.quantity); }, 0);
-            const deliveryFee = subtotal >= 9000 ? 0 : 200;
+            const deliveryFee = subtotal >= 9000 ? 0 : 350;
             const total = subtotal + deliveryFee;
 
             const order = {
@@ -521,7 +521,9 @@
                 '  Address: ' + order.customer.address + '%0A' +
                 '  Instructions: ' + order.customer.instructions + '%0A%0A' +
                 '🛍️ *Order Items*%0A' + itemsText + '%0A%0A' +
-                '💰 *Total: Rs. ' + order.total.toLocaleString() + '*%0A' +
+                '💰 *Subtotal: Rs. ' + order.subtotal.toLocaleString() + '*%0A' +
+                '🚚 *Delivery: ' + (order.deliveryFee === 0 ? 'FREE' : 'Rs. ' + order.deliveryFee.toLocaleString()) + '*%0A' +
+                '💵 *Total: Rs. ' + order.total.toLocaleString() + '*%0A' +
                 '💳 Payment: ' + (paymentLabels[order.payment] || order.payment) + '%0A%0A' +
                 '✅ Please confirm order.';
 
