@@ -1,20 +1,61 @@
 /* =========================
    GEN.Z GADGETS
-   Checkout JavaScript
+   Checkout JavaScript - Firebase + WhatsApp
 ========================= */
 
 let cartItems = [];
-let selectedPayment = 'whatsapp';
+let selectedPayment = 'easypaisa';
 
-/* =========================
-   LOAD CHECKOUT
-========================= */
+// Wait for Firebase
+function waitForFirebase(callback) {
+    if (window.firebaseDB) {
+        callback();
+    } else {
+        setTimeout(function() { waitForFirebase(callback); }, 100);
+    }
+}
+
+// Save order to Firebase
+async function saveOrderToFirebase(order) {
+    return new Promise(function(resolve) {
+        waitForFirebase(async function() {
+            try {
+                const { db, doc, setDoc } = window.firebaseDB;
+                await setDoc(doc(db, 'orders', String(order.orderNumber)), order);
+                console.log('✅ Order saved to Firebase:', order.orderNumber);
+                resolve(true);
+            } catch (error) {
+                console.error('❌ Firebase order save error:', error);
+                resolve(false);
+            }
+        });
+    });
+}
+
+function updateCartBadge() {
+    const cart = JSON.parse(localStorage.getItem('genzCart')) || [];
+    const totalItems = cart.reduce(function(sum, item) { return sum + item.quantity; }, 0);
+    const cartElement = document.getElementById('cartCount');
+    if (cartElement) cartElement.textContent = totalItems;
+}
+
+function toggleMenu() {
+    const menu = document.getElementById('mobileMenu');
+    if (menu) menu.classList.toggle('active');
+}
+
+function goToHomeSearch() {
+    const searchInput = document.getElementById('searchInput');
+    if (!searchInput) { window.location.href = 'index.html'; return; }
+    const searchValue = searchInput.value.trim();
+    if (!searchValue) { window.location.href = 'index.html'; return; }
+    window.location.href = 'index.html?search=' + encodeURIComponent(searchValue);
+}
 
 function loadCheckout() {
     const container = document.getElementById('checkoutContent');
     if (!container) return;
 
-    // Get cart from localStorage
     cartItems = JSON.parse(localStorage.getItem('genzCart')) || [];
 
     if (cartItems.length === 0) {
@@ -26,26 +67,23 @@ function loadCheckout() {
                 <a href="index.html" class="primary-btn">Continue Shopping</a>
             </div>
         `;
+        updateCartBadge();
         return;
     }
 
-    // Calculate totals
-    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const deliveryFee = 200; // Fixed delivery fee
+    const subtotal = cartItems.reduce(function(sum, item) { return sum + (item.price * item.quantity); }, 0);
+    const deliveryFee = subtotal >= 9000 ? 0 : 350;
     const total = subtotal + deliveryFee;
 
     container.innerHTML = `
         <div class="checkout-container">
-            <!-- Checkout Form -->
             <div class="checkout-form">
                 <h2><i class="fa-solid fa-user"></i> Customer Details</h2>
-
                 <form id="checkoutForm">
                     <div class="form-group">
                         <label>Full Name <span class="required">*</span></label>
                         <input type="text" id="customerName" placeholder="e.g. Ahmed Khan" required>
                     </div>
-
                     <div class="form-row">
                         <div class="form-group">
                             <label>Phone Number <span class="required">*</span></label>
@@ -56,12 +94,10 @@ function loadCheckout() {
                             <input type="email" id="customerEmail" placeholder="ahmed@email.com">
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label>Delivery Address <span class="required">*</span></label>
                         <textarea id="customerAddress" placeholder="House #, Street, City, Province" required></textarea>
                     </div>
-
                     <div class="form-row">
                         <div class="form-group">
                             <label>City <span class="required">*</span></label>
@@ -76,106 +112,137 @@ function loadCheckout() {
                     <div class="form-group">
                         <label>Payment Method <span class="required">*</span></label>
                         <div class="payment-options">
-                            <div class="payment-option selected" data-payment="whatsapp" onclick="selectPayment('whatsapp')">
-                                <i class="fa-brands fa-whatsapp" style="color:#25D366;"></i>
-                                <span>WhatsApp</span>
-                            </div>
-                            <div class="payment-option" data-payment="jazzcash" onclick="selectPayment('jazzcash')">
-                                <i class="fa-solid fa-mobile-screen" style="color:#ED1B24;"></i>
-                                <span>JazzCash</span>
-                            </div>
-                            <div class="payment-option" data-payment="easypaisa" onclick="selectPayment('easypaisa')">
-                                <i class="fa-solid fa-mobile-screen-button" style="color:#00A859;"></i>
-                                <span>EasyPaisa</span>
+                            <div class="payment-option selected" data-payment="easypaisa" onclick="selectPayment('easypaisa')">
+                                <i class="fa-solid fa-mobile-screen" style="color:#00A859;"></i>
+                                <span>Easypaisa</span>
                             </div>
                             <div class="payment-option" data-payment="bank" onclick="selectPayment('bank')">
                                 <i class="fa-solid fa-building-columns" style="color:#1E3A8A;"></i>
-                                <span>Bank Transfer</span>
+                                <span>UBL Bank</span>
                             </div>
+                            <div class="payment-option" data-payment="jazzcash" onclick="selectPayment('jazzcash')">
+                                <i class="fa-solid fa-wallet" style="color:#ED1B24;"></i>
+                                <span>JazzCash</span>
+                            </div>
+                            <div class="payment-option" data-payment="cod" onclick="selectPayment('cod')">
+                                <i class="fa-solid fa-money-bill-wave" style="color:#f59e0b;"></i>
+                                <span>Cash on Delivery</span>
+                            </div>
+                        </div>
+
+                        <div class="payment-details show" id="easypaisaDetails">
+                            <h4><i class="fa-solid fa-circle-info"></i> Easypaisa Payment Details</h4>
+                            <div class="detail-row">
+                                <strong>Account Number</strong>
+                                <span>0319-7745919 <button type="button" class="copy-btn" onclick="copyText('03197745919')">Copy</button></span>
+                            </div>
+                            <div class="detail-row">
+                                <strong>Account Name</strong>
+                                <span>Intisam Ali</span>
+                            </div>
+                            <p style="color:#166534; font-size:12px; margin-top:10px;">
+                                💡 Payment karne ke baad screenshot WhatsApp par bhejein: <strong>0319-7745919</strong>
+                            </p>
+                        </div>
+
+                        <div class="payment-details" id="bankDetails">
+                            <h4><i class="fa-solid fa-circle-info"></i> UBL Bank Payment Details</h4>
+                            <div class="detail-row">
+                                <strong>Bank Name</strong>
+                                <span>UBL (United Bank Limited)</span>
+                            </div>
+                            <div class="detail-row">
+                                <strong>Account Number</strong>
+                                <span>0620296738441 <button type="button" class="copy-btn" onclick="copyText('0620296738441')">Copy</button></span>
+                            </div>
+                            <div class="detail-row">
+                                <strong>Account Name</strong>
+                                <span>Intisam Ali</span>
+                            </div>
+                            <p style="color:#166534; font-size:12px; margin-top:10px;">
+                                💡 Transfer ke baad screenshot WhatsApp par bhejein: <strong>0319-7745919</strong>
+                            </p>
+                        </div>
+
+                        <div class="payment-details" id="jazzcashDetails">
+                            <h4><i class="fa-solid fa-circle-info"></i> JazzCash Payment Details</h4>
+                            <p style="color:#166534; font-size:13px;">
+                                JazzCash details jald update hongi. Filhal Easypaisa ya UBL Bank use karein. Ya WhatsApp par rabta karein: <strong>0319-7745919</strong>
+                            </p>
+                        </div>
+
+                        <div class="payment-details" id="codDetails">
+                            <h4><i class="fa-solid fa-circle-info"></i> Cash on Delivery</h4>
+                            <p style="color:#166534; font-size:13px;">
+                                Cash on Delivery service <strong>filhal available nahi hai</strong>. Baraye meherbani Easypaisa ya UBL Bank use karein.
+                            </p>
                         </div>
                     </div>
 
                     <button type="submit" class="place-order-btn">
-                        <i class="fa-solid fa-check"></i>
-                        Place Order
+                        <i class="fa-solid fa-check"></i> Place Order
                     </button>
                 </form>
             </div>
 
-            <!-- Order Summary -->
             <div class="order-summary">
                 <h2><i class="fa-solid fa-receipt"></i> Order Summary</h2>
-
                 <div class="order-items">
-                    ${cartItems.map(item => `
-                        <div class="order-item">
-                            <div class="order-item-info">
-                                <div class="order-item-icon">
-                                    <i class="fa-solid ${item.icon || 'fa-box'}"></i>
-                                </div>
-                                <div class="order-item-name">
-                                    ${item.name}
-                                    <small>Qty: ${item.quantity}</small>
-                                </div>
-                            </div>
-                            <div class="order-item-price">
-                                Rs. ${(item.price * item.quantity).toLocaleString()}
-                            </div>
-                        </div>
-                    `).join('')}
+                    ${cartItems.map(function(item) {
+                        return '<div class="order-item">' +
+                            '<div class="order-item-info">' +
+                                '<div class="order-item-icon"><i class="fa-solid ' + (item.icon || 'fa-box') + '"></i></div>' +
+                                '<div class="order-item-name">' + item.name + '<small>Qty: ' + item.quantity + '</small></div>' +
+                            '</div>' +
+                            '<div class="order-item-price">Rs. ' + (item.price * item.quantity).toLocaleString() + '</div>' +
+                        '</div>';
+                    }).join('')}
                 </div>
-
                 <div class="order-totals">
-                    <div>
-                        <span>Subtotal</span>
-                        <span>Rs. ${subtotal.toLocaleString()}</span>
-                    </div>
-                    <div>
-                        <span>Delivery Fee</span>
-                        <span>Rs. ${deliveryFee.toLocaleString()}</span>
-                    </div>
-                    <div class="total">
-                        <span>Total</span>
-                        <span>Rs. ${total.toLocaleString()}</span>
-                    </div>
+                    <div><span>Subtotal</span><span>Rs. ${subtotal.toLocaleString()}</span></div>
+                    <div><span>Delivery Fee</span><span>${deliveryFee === 0 ? '<span style="color:#16a34a; font-weight:700;">FREE</span>' : 'Rs. ' + deliveryFee.toLocaleString()}</span></div>
+                    <div class="total"><span>Total</span><span>Rs. ${total.toLocaleString()}</span></div>
                 </div>
-
                 <div style="margin-top: 15px; padding: 15px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0;">
                     <p style="font-size: 13px; color: #166534; margin: 0;">
                         <i class="fa-solid fa-truck"></i>
-                        Free delivery on orders above Rs. 5,000
+                        ${subtotal >= 9000 ? '✅ Free delivery applied (All over Pakistan)' : 'Free delivery on orders above Rs. 9,000 — All over Pakistan'}
                     </p>
                 </div>
             </div>
         </div>
     `;
 
-    // Update cart badge
     updateCartBadge();
+    const form = document.getElementById('checkoutForm');
+    if (form) form.addEventListener('submit', placeOrder);
 }
-
-/* =========================
-   SELECT PAYMENT
-========================= */
 
 function selectPayment(method) {
     selectedPayment = method;
-    
-    document.querySelectorAll('.payment-option').forEach(el => {
+    document.querySelectorAll('.payment-option').forEach(function(el) {
         el.classList.remove('selected');
     });
-    
-    document.querySelector(`.payment-option[data-payment="${method}"]`).classList.add('selected');
+    document.querySelector('.payment-option[data-payment="' + method + '"]').classList.add('selected');
+
+    document.querySelectorAll('.payment-details').forEach(function(el) {
+        el.classList.remove('show');
+    });
+    const detailEl = document.getElementById(method + 'Details');
+    if (detailEl) detailEl.classList.add('show');
 }
 
-/* =========================
-   PLACE ORDER
-========================= */
+function copyText(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        alert('✅ Copied: ' + text);
+    }).catch(function() {
+        alert('Copy: ' + text);
+    });
+}
 
-function placeOrder(event) {
+async function placeOrder(event) {
     event.preventDefault();
 
-    // Get form values
     const name = document.getElementById('customerName').value.trim();
     const phone = document.getElementById('customerPhone').value.trim();
     const email = document.getElementById('customerEmail').value.trim();
@@ -183,49 +250,31 @@ function placeOrder(event) {
     const city = document.getElementById('customerCity').value.trim();
     const instructions = document.getElementById('deliveryInstructions').value.trim();
 
-    // Validate
-    if (!name) {
-        alert('Please enter your full name.');
-        return;
-    }
-    if (!phone || phone.length < 10) {
-        alert('Please enter a valid phone number.');
-        return;
-    }
-    if (!address) {
-        alert('Please enter your delivery address.');
-        return;
-    }
-    if (!city) {
-        alert('Please enter your city.');
+    if (!name) { alert('Please enter your full name.'); return; }
+    if (!phone || phone.length < 10) { alert('Please enter a valid phone number.'); return; }
+    if (!address) { alert('Please enter your delivery address.'); return; }
+    if (!city) { alert('Please enter your city.'); return; }
+
+    if (selectedPayment === 'cod') {
+        alert('Cash on Delivery filhal available nahi hai. Baraye meherbani Easypaisa ya UBL Bank select karein.');
         return;
     }
 
-    // Calculate totals
-    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const deliveryFee = subtotal >= 5000 ? 0 : 200;
+    const subtotal = cartItems.reduce(function(sum, item) { return sum + (item.price * item.quantity); }, 0);
+    const deliveryFee = subtotal >= 9000 ? 0 : 350;
     const total = subtotal + deliveryFee;
 
-    // Create order object
     const order = {
         id: Date.now(),
         orderNumber: 'GENZ-' + Date.now().toString().slice(-8),
         date: new Date().toISOString(),
         customer: {
-            name: name,
-            phone: phone,
-            email: email || 'Not provided',
-            address: address,
-            city: city,
-            instructions: instructions || 'None'
+            name: name, phone: phone, email: email || 'Not provided',
+            address: address, city: city, instructions: instructions || 'None'
         },
-        items: cartItems.map(item => ({
-            id: item.id,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            icon: item.icon || 'fa-box'
-        })),
+        items: cartItems.map(function(item) {
+            return { id: item.id, name: item.name, price: item.price, quantity: item.quantity, icon: item.icon || 'fa-box' };
+        }),
         payment: selectedPayment,
         subtotal: subtotal,
         deliveryFee: deliveryFee,
@@ -233,104 +282,132 @@ function placeOrder(event) {
         status: 'Pending'
     };
 
-    // Save order to localStorage
+    // Save to Firebase
+    const saved = await saveOrderToFirebase(order);
+    if (!saved) {
+        alert('⚠️ Order save nahi hua. Internet check karein aur dobara koshish karein.');
+        return;
+    }
+
+    // Also save to localStorage (backup)
     let orders = JSON.parse(localStorage.getItem('genzOrders')) || [];
-    orders.unshift(order); // Add new order at the beginning
+    orders.unshift(order);
     localStorage.setItem('genzOrders', JSON.stringify(orders));
 
-    // Clear cart
     localStorage.removeItem('genzCart');
     updateCartBadge();
-
-    // Show success message
     showOrderSuccess(order);
-
-    // Send WhatsApp message
     sendWhatsAppOrder(order);
 }
 
-/* =========================
-   SHOW ORDER SUCCESS
-========================= */
-
 function showOrderSuccess(order) {
     const container = document.getElementById('checkoutContent');
-    
+    const paymentLabel = {
+        'easypaisa': 'Easypaisa',
+        'bank': 'UBL Bank',
+        'jazzcash': 'JazzCash',
+        'cod': 'Cash on Delivery'
+    }[order.payment] || order.payment;
+
     container.innerHTML = `
-        <div style="text-align: center; padding: 60px 20px; background: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
-            <div style="width: 80px; height: 80px; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-                <i class="fa-solid fa-check" style="font-size: 40px; color: #16a34a;"></i>
-            </div>
-            <h2 style="color: #16a34a; margin-bottom: 10px;">Order Placed Successfully! 🎉</h2>
-            <p style="color: #64748b; font-size: 18px; margin-bottom: 5px;">
-                Order #${order.orderNumber}
-            </p>
-            <p style="color: #94a3b8; margin-bottom: 25px;">
-                We will contact you shortly on <strong>${order.customer.phone}</strong>
-            </p>
-            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <div class="success-container">
+            <div class="check-icon"><i class="fa-solid fa-check"></i></div>
+            <h2>Order Placed Successfully! 🎉</h2>
+            <p>Order #${order.orderNumber}</p>
+            <p class="order-number">Payment Method: <strong>${paymentLabel}</strong></p>
+            <p class="order-number">We will contact you shortly on <strong>${order.customer.phone}</strong></p>
+
+            ${order.payment === 'easypaisa' ? `
+                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:15px; margin:20px auto; max-width:400px; text-align:left;">
+                    <h4 style="color:#166534; margin-bottom:8px;">💳 Payment Instructions:</h4>
+                    <p style="font-size:14px; color:#166534; margin:5px 0;">Send Rs. ${order.total.toLocaleString()} to:</p>
+                    <p style="font-size:16px; color:#111827; font-weight:700; margin:5px 0;">Easypaisa: 0319-7745919</p>
+                    <p style="font-size:14px; color:#166534; margin:5px 0;">Account Name: Intisam Ali</p>
+                    <p style="font-size:13px; color:#166534; margin-top:10px;">📸 Screenshot WhatsApp par bhejein: <strong>0319-7745919</strong></p>
+                </div>
+            ` : ''}
+
+            ${order.payment === 'bank' ? `
+                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:15px; margin:20px auto; max-width:400px; text-align:left;">
+                    <h4 style="color:#166534; margin-bottom:8px;">🏦 Payment Instructions:</h4>
+                    <p style="font-size:14px; color:#166534; margin:5px 0;">Transfer Rs. ${order.total.toLocaleString()} to:</p>
+                    <p style="font-size:15px; color:#111827; font-weight:700; margin:5px 0;">UBL: 0620296738441</p>
+                    <p style="font-size:14px; color:#166534; margin:5px 0;">Account Name: Intisam Ali</p>
+                    <p style="font-size:13px; color:#166534; margin-top:10px;">📸 Screenshot WhatsApp par bhejein: <strong>0319-7745919</strong></p>
+                </div>
+            ` : ''}
+
+            <div class="btn-group" style="margin-top:25px;">
                 <a href="index.html" class="primary-btn">
-                    <i class="fa-solid fa-store"></i>
-                    Continue Shopping
+                    <i class="fa-solid fa-store"></i> Continue Shopping
                 </a>
                 <a href="https://wa.me/923197745919?text=Assalam-o-Alaikum%20GEN.Z%20GADGETS%2C%20Mera%20order%20%23${order.orderNumber}%20place%20kia%20hai.%20Mera%20name%3A%20${order.customer.name}" 
-                   target="_blank"
-                   class="primary-btn" 
-                   style="background: #25D366; color: white;">
-                    <i class="fa-brands fa-whatsapp"></i>
-                    Contact on WhatsApp
+                   target="_blank" class="primary-btn whatsapp-btn">
+                    <i class="fa-brands fa-whatsapp"></i> Confirm on WhatsApp
                 </a>
             </div>
         </div>
     `;
 }
 
-/* =========================
-   SEND WHATSAPP ORDER
-========================= */
-
 function sendWhatsAppOrder(order) {
-    // Build order summary for WhatsApp
-    let itemsText = order.items.map(item => 
-        `  • ${item.name} (x${item.quantity}) = Rs. ${(item.price * item.quantity).toLocaleString()}`
-    ).join('%0A');
+    const paymentLabels = {
+        'easypaisa': 'Easypaisa',
+        'bank': 'UBL Bank',
+        'jazzcash': 'JazzCash',
+        'cod': 'Cash on Delivery'
+    };
 
-    const message = `📦 *New Order Received!*%0A%0A` +
-        `🔢 Order #: ${order.orderNumber}%0A` +
-        `📅 Date: ${new Date(order.date).toLocaleDateString('en-PK')}%0A%0A` +
-        `👤 *Customer Details*%0A` +
-        `  Name: ${order.customer.name}%0A` +
-        `  Phone: ${order.customer.phone}%0A` +
-        `  Email: ${order.customer.email}%0A` +
-        `  City: ${order.customer.city}%0A` +
-        `  Address: ${order.customer.address}%0A` +
-        `  Instructions: ${order.customer.instructions}%0A%0A` +
-        `🛍️ *Order Items*%0A${itemsText}%0A%0A` +
-        `💰 *Total: Rs. ${order.total.toLocaleString()}*%0A` +
-        `💳 Payment: ${order.payment.charAt(0).toUpperCase() + order.payment.slice(1)}%0A%0A` +
-        `✅ Please confirm order.`;
+    // Build items list - each on new line
+    let itemsText = '';
+    order.items.forEach(function(item, index) {
+        itemsText += (index + 1) + '. ' + item.name + '%0A' +
+                      '   Quantity: ' + item.quantity + '%0A' +
+                      '   Price: Rs. ' + item.price.toLocaleString() + '%0A' +
+                      '   Total: Rs. ' + (item.price * item.quantity).toLocaleString() + '%0A%0A';
+    });
 
-    // Open WhatsApp with the message
-    const whatsappUrl = `https://wa.me/923197745919?text=${message}`;
-    
-    // Open in new tab after a small delay
-    setTimeout(() => {
+    const message =
+        '🛒 *NEW ORDER RECEIVED* 🛒%0A' +
+        '━━━━━━━━━━━━━━━━━━━━━%0A%0A' +
+        '📋 *Order Number:* %0A' +
+        '`' + order.orderNumber + '`%0A%0A' +
+        '📅 *Date & Time:*%0A' +
+        new Date(order.date).toLocaleString('en-PK', {
+            day: 'numeric', month: 'long', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        }) + '%0A%0A' +
+        '━━━━━━━━━━━━━━━━━━━━━%0A' +
+        '👤 *CUSTOMER DETAILS*%0A' +
+        '━━━━━━━━━━━━━━━━━━━━━%0A%0A' +
+        '▪️ *Name:* ' + order.customer.name + '%0A' +
+        '▪️ *Phone:* ' + order.customer.phone + '%0A' +
+        '▪️ *Email:* ' + order.customer.email + '%0A' +
+        '▪️ *City:* ' + order.customer.city + '%0A' +
+        '▪️ *Address:* ' + order.customer.address + '%0A' +
+        '▪️ *Instructions:* ' + order.customer.instructions + '%0A%0A' +
+        '━━━━━━━━━━━━━━━━━━━━━%0A' +
+        '🛍️ *ORDER ITEMS*%0A' +
+        '━━━━━━━━━━━━━━━━━━━━━%0A%0A' +
+        itemsText +
+        '━━━━━━━━━━━━━━━━━━━━━%0A' +
+        '💰 *PAYMENT SUMMARY*%0A' +
+        '━━━━━━━━━━━━━━━━━━━━━%0A%0A' +
+        '▪️ *Subtotal:* Rs. ' + order.subtotal.toLocaleString() + '%0A' +
+        '▪️ *Delivery:* ' + (order.deliveryFee === 0 ? 'FREE ✅' : 'Rs. ' + order.deliveryFee.toLocaleString()) + '%0A' +
+        '▪️ *Total:* *Rs. ' + order.total.toLocaleString() + '*%0A%0A' +
+        '💳 *Payment Method:* ' + (paymentLabels[order.payment] || order.payment) + '%0A%0A' +
+        '━━━━━━━━━━━━━━━━━━━━━%0A' +
+        '✅ *Please confirm this order.*%0A' +
+        '━━━━━━━━━━━━━━━━━━━━━';
+
+    const whatsappUrl = 'https://wa.me/923197745919?text=' + message;
+
+    setTimeout(function() {
         window.open(whatsappUrl, '_blank');
     }, 500);
 }
 
-/* =========================
-   EVENT LISTENERS
-========================= */
-
 document.addEventListener('DOMContentLoaded', function() {
     loadCheckout();
-
-    // Form submit
-    const form = document.getElementById('checkoutForm');
-    if (form) {
-        form.addEventListener('submit', placeOrder);
-    }
 });
-
-console.log('✅ CHECKOUT JS LOADED');
