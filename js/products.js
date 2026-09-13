@@ -19,7 +19,7 @@ async function fetchProductsFromServer() {
             try {
                 const { db, collection, getDocs } = window.firebaseDB;
                 const querySnapshot = await getDocs(collection(db, 'products'));
-                const products = [];
+                let products = [];
                 querySnapshot.forEach(function(doc) {
                     products.push({ id: parseInt(doc.id), ...doc.data() });
                 });
