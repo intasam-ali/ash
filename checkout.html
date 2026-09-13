@@ -109,6 +109,11 @@
         .primary-btn:hover { background: #7c3aed; transform: translateY(-2px); }
         .whatsapp-btn { background: #25D366; color: white; }
         .whatsapp-btn:hover { background: #1ebe5d; }
+        .free-delivery-box {
+            margin-top: 15px; padding: 15px; background: #f0fdf4;
+            border-radius: 10px; border: 1px solid #bbf7d0;
+        }
+        .free-delivery-box p { font-size: 13px; color: #166534; margin: 0; }
         @media (max-width: 768px) {
             .checkout-container { grid-template-columns: 1fr; gap: 25px; }
             .checkout-form, .order-summary { padding: 25px; }
@@ -208,7 +213,7 @@
             }
 
             const subtotal = cartItems.reduce(function(sum, item) { return sum + (item.price * item.quantity); }, 0);
-            const deliveryFee = subtotal >= 5000 ? 0 : 200;
+            const deliveryFee = subtotal >= 9000 ? 0 : 200;
             const total = subtotal + deliveryFee;
 
             container.innerHTML = `
@@ -256,13 +261,13 @@
                                         <i class="fa-solid fa-building-columns" style="color:#1E3A8A;"></i>
                                         <span>UBL Bank</span>
                                     </div>
-                                    <div class="payment-option" data-payment="cod" onclick="selectPayment('cod')">
-                                        <i class="fa-solid fa-money-bill-wave" style="color:#f59e0b;"></i>
-                                        <span>Cash on Delivery</span>
-                                    </div>
                                     <div class="payment-option" data-payment="jazzcash" onclick="selectPayment('jazzcash')">
                                         <i class="fa-solid fa-wallet" style="color:#ED1B24;"></i>
                                         <span>JazzCash</span>
+                                    </div>
+                                    <div class="payment-option" data-payment="cod" onclick="selectPayment('cod')">
+                                        <i class="fa-solid fa-money-bill-wave" style="color:#f59e0b;"></i>
+                                        <span>Cash on Delivery</span>
                                     </div>
                                 </div>
 
@@ -302,19 +307,19 @@
                                     </p>
                                 </div>
 
-                                <!-- COD Details -->
-                                <div class="payment-details" id="codDetails">
-                                    <h4><i class="fa-solid fa-circle-info"></i> Cash on Delivery</h4>
-                                    <p style="color:#166534; font-size:13px;">
-                                        Delivery ke waqt cash mein payment karein. Hum aapko call karenge order confirm karne ke liye.
-                                    </p>
-                                </div>
-
                                 <!-- JazzCash Details -->
                                 <div class="payment-details" id="jazzcashDetails">
                                     <h4><i class="fa-solid fa-circle-info"></i> JazzCash Payment Details</h4>
                                     <p style="color:#166534; font-size:13px;">
-                                        JazzCash details jald update hongi. Filhal Easypaisa ya Bank use karein. Ya WhatsApp par rabta karein: <strong>0319-7745919</strong>
+                                        JazzCash details jald update hongi. Filhal Easypaisa ya UBL Bank use karein. Ya WhatsApp par rabta karein: <strong>0319-7745919</strong>
+                                    </p>
+                                </div>
+
+                                <!-- COD Details -->
+                                <div class="payment-details" id="codDetails">
+                                    <h4><i class="fa-solid fa-circle-info"></i> Cash on Delivery</h4>
+                                    <p style="color:#166534; font-size:13px;">
+                                        Cash on Delivery service <strong>filhal available nahi hai</strong>. Baraye meherbani Easypaisa ya UBL Bank use karein.
                                     </p>
                                 </div>
                             </div>
@@ -340,13 +345,15 @@
                         </div>
                         <div class="order-totals">
                             <div><span>Subtotal</span><span>Rs. ${subtotal.toLocaleString()}</span></div>
-                            <div><span>Delivery Fee</span><span>Rs. ${deliveryFee.toLocaleString()}</span></div>
+                            <div><span>Delivery Fee</span><span>${deliveryFee === 0 ? '<span style="color:#16a34a; font-weight:700;">FREE</span>' : 'Rs. ' + deliveryFee.toLocaleString()}</span></div>
                             <div class="total"><span>Total</span><span>Rs. ${total.toLocaleString()}</span></div>
                         </div>
-                        <div style="margin-top: 15px; padding: 15px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0;">
-                            <p style="font-size: 13px; color: #166534; margin: 0;">
+                        <div class="free-delivery-box">
+                            <p>
                                 <i class="fa-solid fa-truck"></i>
-                                ${subtotal >= 5000 ? '✅ Free delivery on this order!' : 'Free delivery on orders above Rs. 5,000'}
+                                ${subtotal >= 9000 
+                                    ? '✅ <strong>Free delivery applied!</strong>' 
+                                    : '🚚 Free delivery on orders above <strong>Rs. 9,000</strong>'}
                             </p>
                         </div>
                     </div>
@@ -395,8 +402,13 @@
             if (!address) { alert('Please enter your delivery address.'); return; }
             if (!city) { alert('Please enter your city.'); return; }
 
+            if (selectedPayment === 'cod') {
+                alert('Cash on Delivery filhal available nahi hai. Baraye meherbani Easypaisa ya UBL Bank select karein.');
+                return;
+            }
+
             const subtotal = cartItems.reduce(function(sum, item) { return sum + (item.price * item.quantity); }, 0);
-            const deliveryFee = subtotal >= 5000 ? 0 : 200;
+            const deliveryFee = subtotal >= 9000 ? 0 : 200;
             const total = subtotal + deliveryFee;
 
             const order = {
@@ -432,8 +444,8 @@
             const paymentLabel = {
                 'easypaisa': 'Easypaisa',
                 'bank': 'UBL Bank',
-                'cod': 'Cash on Delivery',
-                'jazzcash': 'JazzCash'
+                'jazzcash': 'JazzCash',
+                'cod': 'Cash on Delivery'
             }[order.payment] || order.payment;
 
             container.innerHTML = `
@@ -464,6 +476,15 @@
                         </div>
                     ` : ''}
 
+                    ${order.payment === 'jazzcash' ? `
+                        <div style="background:#fef3c7; border:1px solid #fcd34d; border-radius:12px; padding:15px; margin:20px auto; max-width:400px; text-align:left;">
+                            <h4 style="color:#92400e; margin-bottom:8px;">⚠️ JazzCash Payment:</h4>
+                            <p style="font-size:14px; color:#92400e; margin:5px 0;">JazzCash details filhal update ho rahi hain.</p>
+                            <p style="font-size:14px; color:#92400e; margin:5px 0;">Baraye meherbani WhatsApp par rabta karein:</p>
+                            <p style="font-size:16px; color:#111827; font-weight:700; margin:5px 0;">📱 0319-7745919</p>
+                        </div>
+                    ` : ''}
+
                     <div class="btn-group" style="margin-top:25px;">
                         <a href="index.html" class="primary-btn">
                             <i class="fa-solid fa-store"></i> Continue Shopping
@@ -485,8 +506,8 @@
             const paymentLabels = {
                 'easypaisa': 'Easypaisa',
                 'bank': 'UBL Bank',
-                'cod': 'Cash on Delivery',
-                'jazzcash': 'JazzCash'
+                'jazzcash': 'JazzCash',
+                'cod': 'Cash on Delivery'
             };
 
             const message = '📦 *New Order Received!*%0A%0A' +
