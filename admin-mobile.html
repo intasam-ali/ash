@@ -8,7 +8,6 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; background: #f5f7fa; padding-bottom: 80px; }
-
         .mobile-header {
             background: #111827; color: white; padding: 15px 20px;
             position: sticky; top: 0; z-index: 100;
@@ -17,9 +16,7 @@
         .mobile-header .logo { font-size: 20px; font-weight: 900; }
         .mobile-header .logo span { color: #7c3aed; }
         .mobile-header a { color: #94a3b8; text-decoration: none; font-size: 14px; }
-
         .mobile-container { padding: 15px; max-width: 500px; margin: 0 auto; }
-
         .mobile-stats {
             display: grid; grid-template-columns: 1fr 1fr 1fr;
             gap: 10px; margin-bottom: 20px;
@@ -30,7 +27,6 @@
         }
         .mobile-stat .num { font-size: 24px; font-weight: 900; color: #111827; display: block; }
         .mobile-stat .label { font-size: 11px; color: #94a3b8; }
-
         .mobile-product-item {
             background: white; border-radius: 12px; padding: 15px;
             margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
@@ -47,7 +43,6 @@
         }
         .mobile-product-item .actions .edit { background: #ede9fe; color: #7c3aed; }
         .mobile-product-item .actions .delete { background: #fee2e2; color: #dc2626; }
-
         .mobile-fab {
             position: fixed; bottom: 20px; right: 20px;
             width: 60px; height: 60px; background: #7c3aed; color: white;
@@ -56,7 +51,6 @@
             cursor: pointer; z-index: 99;
         }
         .mobile-fab:active { transform: scale(0.95); }
-
         .mobile-form {
             background: white; border-radius: 16px; padding: 20px;
             margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
@@ -84,22 +78,18 @@
         }
         .mobile-form .form-actions .save { background: #7c3aed; color: white; }
         .mobile-form .form-actions .cancel { background: #f1f5f9; color: #64748b; }
-
         .mobile-search {
             width: 100%; padding: 12px 15px; border: 1px solid #d1d5db;
             border-radius: 10px; font-size: 14px; margin-bottom: 15px; background: white;
         }
-
         .mobile-empty { text-align: center; padding: 40px 20px; color: #94a3b8; }
         .mobile-empty i { font-size: 40px; display: block; margin-bottom: 10px; }
-
         .status-dot {
             display: inline-block; width: 8px; height: 8px;
             border-radius: 50%; margin-right: 5px;
         }
         .status-dot.active { background: #22c55e; }
         .status-dot.inactive { background: #ef4444; }
-
         .toast {
             position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
             background: #111827; color: white; padding: 12px 24px;
@@ -108,16 +98,13 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
         .toast.show { display: block; }
-
         .image-help-box {
             background: #f0fdf4; border: 1px solid #bbf7d0;
             border-radius: 10px; padding: 12px; margin-top: 8px;
         }
         .image-help-box h4 { color: #166534; font-size: 13px; margin-bottom: 6px; }
         .image-help-box ol { color: #166534; font-size: 12px; padding-left: 20px; margin: 5px 0; }
-        .image-help-box ol li { margin-bottom: 3px; }
         .image-help-box a { color: #7c3aed; font-weight: 600; }
-
         .image-url-input { display: flex; gap: 8px; flex-wrap: wrap; }
         .image-url-input input { flex: 1; min-width: 150px; }
         .image-url-input button {
@@ -125,7 +112,6 @@
             border-radius: 8px; padding: 10px 15px; cursor: pointer;
             font-weight: 600; white-space: nowrap;
         }
-
         .image-preview { display: none; margin-top: 8px; }
         .image-preview img {
             max-width: 120px; max-height: 120px;
@@ -177,27 +163,22 @@
                 <label>Product Name *</label>
                 <input type="text" id="pName" placeholder="e.g. Wireless Earbuds">
             </div>
-
             <div class="form-group">
                 <label>Category *</label>
                 <input type="text" id="pCategory" placeholder="e.g. Audio">
             </div>
-
             <div class="form-group">
                 <label>Price (Rs.) *</label>
                 <input type="number" id="pPrice" placeholder="2499">
             </div>
-
             <div class="form-group">
                 <label>Old Price (Optional)</label>
                 <input type="number" id="pOldPrice" placeholder="3499">
             </div>
-
             <div class="form-group">
                 <label>Stock</label>
                 <input type="number" id="pStock" placeholder="20" value="10">
             </div>
-
             <div class="form-group">
                 <label>Rating</label>
                 <select id="pRating">
@@ -208,7 +189,6 @@
                     <option value="1">★☆☆☆☆ (1 Star)</option>
                 </select>
             </div>
-
             <div class="form-group">
                 <label>Badge</label>
                 <select id="pBadge">
@@ -218,7 +198,6 @@
                     <option value="HOT">⚡ HOT</option>
                 </select>
             </div>
-
             <div class="form-group">
                 <label>Product Image URL</label>
                 <div class="image-url-input">
@@ -238,30 +217,23 @@
                     <h4>📸 How to add image from mobile:</h4>
                     <ol>
                         <li>Tap <strong>"Get Image"</strong> button above</li>
-                        <li>Go to <a href="https://postimages.org" target="_blank">PostImages.org</a></li>
-                        <li>Tap <strong>"Choose Images"</strong> → Select photo</li>
-                        <li>Tap <strong>"Upload"</strong></li>
-                        <li>Copy the <strong>"Direct Link"</strong> URL</li>
-                        <li>Paste it in the Image URL field above</li>
+                        <li>Go to <a href="https://imgbb.com" target="_blank">ImgBB.com</a></li>
+                        <li>Upload your image</li>
+                        <li>Copy the <strong>"Direct Link"</strong></li>
+                        <li>Paste it in Image URL field</li>
                     </ol>
                 </div>
-                <small style="color:#94a3b8; display:block; margin-top:4px; font-size:12px;">
-                    💡 Tip: PostImages works great on mobile!
-                </small>
             </div>
-
             <div class="form-group">
                 <label>Description</label>
                 <textarea id="pDescription" rows="3" placeholder="Product description..."></textarea>
             </div>
-
             <div class="form-group">
                 <label style="display:flex; align-items:center; gap:10px;">
                     <input type="checkbox" id="pActive" checked>
                     Product is Active (visible on store)
                 </label>
             </div>
-
             <div class="form-actions">
                 <button class="cancel" onclick="closeForm()">Cancel</button>
                 <button class="save" onclick="saveProduct()"><i class="fa-solid fa-floppy-disk"></i> Save</button>
@@ -277,59 +249,74 @@
 
     <div class="toast" id="toast"></div>
 
-    <script>
-        // ========================================
-        // CONFIG - JSONBIN
-        // ========================================
-        const JSONBIN_BIN_ID = '6aa40459ffd5d16053fa4a09';
-        const JSONBIN_API_KEY = '$2a$10$zZbnaYmlPLZ9iEI4zU83iO1GeTDajOnnoa9dJvr3WewY22z.YrXRq';
-        const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/' + JSONBIN_BIN_ID;
+    <!-- Firebase Module -->
+    <script type="module" src="js/firebase.js"></script>
+    <!-- Products Helper -->
+    <script src="js/products.js"></script>
 
-        // ========================================
-        // GLOBAL VARIABLES
-        // ========================================
+    <script>
         let products = [];
         let editingId = null;
 
-        // ========================================
-        // SERVER FUNCTIONS
-        // ========================================
-        async function fetchProductsFromServer() {
-            try {
-                const response = await fetch(JSONBIN_URL + '/latest', {
-                    headers: { 'X-Master-Key': JSONBIN_API_KEY }
-                });
-                const data = await response.json();
-                if (data.record && Array.isArray(data.record)) {
-                    localStorage.setItem('genzProducts', JSON.stringify(data.record));
-                    products = data.record;
-                    renderProducts();
-                    updateStats();
-                }
-            } catch (error) {
-                console.error('Fetch error:', error);
+        function waitForFirebase(callback) {
+            if (window.firebaseDB) {
+                callback();
+            } else {
+                setTimeout(function() { waitForFirebase(callback); }, 100);
             }
         }
 
-        async function saveProductsToServer(data) {
-            try {
-                const response = await fetch(JSONBIN_URL, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': JSONBIN_API_KEY
-                    },
-                    body: JSON.stringify(data)
+        async function fetchProductsFromFirebase() {
+            return new Promise(function(resolve) {
+                waitForFirebase(async function() {
+                    try {
+                        const { db, collection, getDocs } = window.firebaseDB;
+                        const querySnapshot = await getDocs(collection(db, 'products'));
+                        const list = [];
+                        querySnapshot.forEach(function(doc) {
+                            list.push({ id: parseInt(doc.id), ...doc.data() });
+                        });
+                        list.sort(function(a, b) { return a.id - b.id; });
+                        localStorage.setItem('genzProducts', JSON.stringify(list));
+                        resolve(list);
+                    } catch (error) {
+                        console.error('Fetch error:', error);
+                        resolve([]);
+                    }
                 });
-                return response.ok;
-            } catch (error) {
-                return false;
-            }
+            });
         }
 
-        // ========================================
-        // LOCAL FUNCTIONS
-        // ========================================
+        async function saveToFirebase(product) {
+            return new Promise(function(resolve) {
+                waitForFirebase(async function() {
+                    try {
+                        const { db, doc, setDoc } = window.firebaseDB;
+                        await setDoc(doc(db, 'products', String(product.id)), product);
+                        resolve(true);
+                    } catch (error) {
+                        console.error('Save error:', error);
+                        resolve(false);
+                    }
+                });
+            });
+        }
+
+        async function deleteFromFirebase(productId) {
+            return new Promise(function(resolve) {
+                waitForFirebase(async function() {
+                    try {
+                        const { db, doc, deleteDoc } = window.firebaseDB;
+                        await deleteDoc(doc(db, 'products', String(productId)));
+                        resolve(true);
+                    } catch (error) {
+                        console.error('Delete error:', error);
+                        resolve(false);
+                    }
+                });
+            });
+        }
+
         function getProducts() {
             const saved = localStorage.getItem('genzProducts');
             if (saved) {
@@ -343,20 +330,22 @@
             products = data;
             renderProducts();
             updateStats();
-
-            showToast('📤 Saving...');
-            const saved = await saveProductsToServer(data);
-            if (saved) {
-                showToast('✅ Server par save ho gaya!');
+            showToast('📤 Firebase par save ho raha hai...');
+            let allSaved = true;
+            for (const p of data) {
+                const ok = await saveToFirebase(p);
+                if (!ok) allSaved = false;
+            }
+            if (allSaved) {
+                showToast('✅ Firebase par save ho gaya!');
             } else {
-                showToast('⚠️ Sirf mobile par save hua');
+                showToast('⚠️ Kuch save nahi huye');
             }
         }
 
         function renderProducts(list) {
             if (!list) list = products;
             const container = document.getElementById('productList');
-
             if (list.length === 0) {
                 container.innerHTML = '<div class="mobile-empty">' +
                     '<i class="fa-solid fa-box-open"></i>' +
@@ -364,7 +353,6 @@
                     '<p style="font-size:13px;">Tap the + button to add one!</p></div>';
                 return;
             }
-
             let html = '';
             list.forEach(function(p) {
                 html += '<div class="mobile-product-item">' +
@@ -373,7 +361,6 @@
                         '<div class="category">' + p.category + '</div>' +
                         '<div class="price">Rs. ' + Number(p.price).toLocaleString() + '</div>' +
                         '<div style="font-size:12px; color:#94a3b8;">Stock: ' + (p.stock || 0) + '</div>' +
-                        (p.image ? '<div style="font-size:11px; color:#22c55e;"><i class="fa-solid fa-image"></i> Has image</div>' : '') +
                     '</div>' +
                     '<div class="actions">' +
                         '<button class="edit" onclick="editProduct(' + p.id + ')"><i class="fa-solid fa-pen"></i></button>' +
@@ -388,7 +375,6 @@
             const total = products.length;
             const active = products.filter(function(p) { return p.active !== false; }).length;
             const stock = products.reduce(function(sum, p) { return sum + Number(p.stock || 0); }, 0);
-
             document.getElementById('totalCount').textContent = total;
             document.getElementById('activeCount').textContent = active;
             document.getElementById('stockCount').textContent = stock;
@@ -397,7 +383,6 @@
         function openForm(product) {
             const form = document.getElementById('productForm');
             form.classList.add('active');
-
             if (product) {
                 document.getElementById('formTitle').textContent = '✏️ Edit Product';
                 document.getElementById('editId').value = product.id;
@@ -411,12 +396,11 @@
                 document.getElementById('pImage').value = product.image || '';
                 document.getElementById('pDescription').value = product.description || '';
                 document.getElementById('pActive').checked = product.active !== false;
-                editingId = product.id;
-
                 if (product.image) {
                     document.getElementById('mobilePreviewImg').src = product.image;
                     document.getElementById('mobileImagePreview').style.display = 'block';
                 }
+                editingId = product.id;
             } else {
                 document.getElementById('formTitle').textContent = '➕ Add New Product';
                 document.getElementById('editId').value = '';
@@ -433,7 +417,6 @@
                 document.getElementById('mobileImagePreview').style.display = 'none';
                 editingId = null;
             }
-
             form.scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -464,16 +447,11 @@
             if (editId) {
                 const index = list.findIndex(function(p) { return p.id === Number(editId); });
                 if (index !== -1) {
-                    list[index].name = name;
-                    list[index].category = category;
-                    list[index].price = price;
-                    list[index].oldPrice = oldPrice;
-                    list[index].stock = stock;
-                    list[index].rating = rating;
-                    list[index].badge = badge;
-                    list[index].image = image;
-                    list[index].description = description;
-                    list[index].active = active;
+                    list[index] = Object.assign({}, list[index], {
+                        name: name, category: category, price: price, oldPrice: oldPrice,
+                        stock: stock, rating: rating, badge: badge, image: image,
+                        description: description, active: active
+                    });
                 }
                 showToast('✅ Product updated!');
             } else {
@@ -496,11 +474,14 @@
             if (product) openForm(product);
         }
 
-        function deleteProduct(id) {
+        async function deleteProduct(id) {
             const product = products.find(function(p) { return p.id === id; });
             if (confirm('Delete "' + (product ? product.name : 'this product') + '"?')) {
+                await deleteFromFirebase(id);
                 products = products.filter(function(p) { return p.id !== id; });
-                saveProducts(products);
+                localStorage.setItem('genzProducts', JSON.stringify(products));
+                renderProducts();
+                updateStats();
                 showToast('🗑️ Product deleted');
             }
         }
@@ -516,7 +497,7 @@
         }
 
         function openImageHost() {
-            window.open('https://postimages.org', '_blank');
+            window.open('https://imgbb.com', '_blank');
             showToast('📸 Upload image, copy "Direct Link"');
         }
 
@@ -532,9 +513,6 @@
             setTimeout(function() { toast.classList.remove('show'); }, 3000);
         }
 
-        // ========================================
-        // IMAGE AUTO PREVIEW
-        // ========================================
         document.addEventListener('DOMContentLoaded', function() {
             const imageInput = document.getElementById('pImage');
             if (imageInput) {
@@ -550,10 +528,9 @@
             }
         });
 
-        // ========================================
         // START
-        // ========================================
-        fetchProductsFromServer().then(function() {
+        fetchProductsFromFirebase().then(function(list) {
+            products = list;
             renderProducts();
             updateStats();
             console.log('✅ Mobile Admin Loaded');
