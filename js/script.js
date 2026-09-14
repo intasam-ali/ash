@@ -427,12 +427,80 @@ function goToHomeSearch() {
     if (!searchValue) { window.location.href = 'index.html'; return; }
     window.location.href = 'index.html?search=' + encodeURIComponent(searchValue);
 }
+/* =========================
+   LOAD CATEGORIES (Homepage)
+========================= */
+async function loadCategories() {
+    const grid = document.getElementById('categoriesGrid');
+    if (!grid) return;
 
+    try {
+        const cats = await new Promise(function(resolve) {
+            waitForFirebase(async function() {
+                try {
+                    const { db, collection, getDocs } = window.firebaseDB;
+                    const snapshot = await getDocs(collection(db, 'categories'));
+                    const list = [];
+                    snapshot.forEach(function(doc) {
+                        list.push(doc.data());
+                    });
+                    list.sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
+                    resolve(list);
+                } catch (e) {
+                    console.error('Categories fetch error:', e);
+                    resolve([]);
+                }
+            });
+        });
+
+        // Fallback: agar Firebase mein categories nahi hain
+        if (cats.length === 0) {
+            const defaults = [
+                { id: 1, name: 'Phone Cases', description: 'Protect your phone', icon: 'fa-mobile-screen', order: 0 },
+                { id: 2, name: 'Chargers', description: 'Fast charging gear', icon: 'fa-bolt', order: 1 },
+                { id: 3, name: 'Audio', description: 'Earbuds & headphones', icon: 'fa-headphones', order: 2 },
+                { id: 4, name: 'Power Banks', description: 'Power on the go', icon: 'fa-battery-full', order: 3 }
+            ];
+            renderCategories(defaults);
+            return;
+        }
+
+        renderCategories(cats);
+
+    } catch (error) {
+        console.error('Categories error:', error);
+        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:#94a3b8;">Categories load nahi ho saki</div>';
+    }
+}
+
+function renderCategories(cats) {
+    const grid = document.getElementById('categoriesGrid');
+    if (!grid) return;
+
+    if (cats.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:#94a3b8;">Koi category nahi</div>';
+        return;
+    }
+
+    grid.innerHTML = cats.map(function(c) {
+        const safeName = (c.name || '').replace(/'/g, "\\'");
+        return '<div class="category-card" onclick="filterByCategory(\'' + safeName + '\')" style="cursor:pointer;">' +
+            '<div class="category-icon"><i class="fa-solid ' + (c.icon || 'fa-box') + '"></i></div>' +
+            '<h3>' + c.name + '</h3>' +
+            '<p>' + (c.description || '') + '</p>' +
+        '</div>';
+    }).join('');
+}
+
+/* =========================
+   UPDATE START TO LOAD CATEGORIES
+========================= */
 /* =========================
    START
 ========================= */
 document.addEventListener('DOMContentLoaded', async function() {
     updateCartBadge();
+    await loadCategories();
     await displayProducts();
     await loadProductDetails();
     console.log('✅ GEN.Z GADGETS loaded!');
