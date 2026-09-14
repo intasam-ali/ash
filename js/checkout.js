@@ -6,7 +6,14 @@
 let cartItems = [];
 let selectedPayment = 'easypaisa';
 
-// Wait for Firebase
+const paymentLabels = {
+    'easypaisa': 'Easypaisa',
+    'bank': 'UBL Bank',
+    'jazzcash': 'JazzCash',
+    'cod': 'Cash on Delivery'
+};
+
+// ===== Firebase helper =====
 function waitForFirebase(callback) {
     if (window.firebaseDB) {
         callback();
@@ -15,7 +22,6 @@ function waitForFirebase(callback) {
     }
 }
 
-// Save order to Firebase
 async function saveOrderToFirebase(order) {
     return new Promise(function(resolve) {
         waitForFirebase(async function() {
@@ -32,6 +38,7 @@ async function saveOrderToFirebase(order) {
     });
 }
 
+// ===== Cart badge =====
 function updateCartBadge() {
     const cart = JSON.parse(localStorage.getItem('genzCart')) || [];
     const totalItems = cart.reduce(function(sum, item) { return sum + item.quantity; }, 0);
@@ -52,6 +59,7 @@ function goToHomeSearch() {
     window.location.href = 'index.html?search=' + encodeURIComponent(searchValue);
 }
 
+// ===== Load Checkout Page =====
 function loadCheckout() {
     const container = document.getElementById('checkoutContent');
     if (!container) return;
@@ -214,10 +222,12 @@ function loadCheckout() {
     `;
 
     updateCartBadge();
+
     const form = document.getElementById('checkoutForm');
     if (form) form.addEventListener('submit', placeOrder);
 }
 
+// ===== Select Payment =====
 function selectPayment(method) {
     selectedPayment = method;
     document.querySelectorAll('.payment-option').forEach(function(el) {
@@ -240,6 +250,7 @@ function copyText(text) {
     });
 }
 
+// ===== Place Order =====
 async function placeOrder(event) {
     event.preventDefault();
 
@@ -289,27 +300,23 @@ async function placeOrder(event) {
         return;
     }
 
-    // Also save to localStorage (backup)
+    // Backup to localStorage
     let orders = JSON.parse(localStorage.getItem('genzOrders')) || [];
     orders.unshift(order);
     localStorage.setItem('genzOrders', JSON.stringify(orders));
 
-       localStorage.removeItem('genzCart');
+    localStorage.removeItem('genzCart');
     updateCartBadge();
+
     showOrderSuccess(order);
-    sendWhatsAppOrder(order);       // Admin ko bhejo
-    sendCustomerConfirmation(order); // Customer ko bhejo
+    sendWhatsAppOrder(order);
+    sendCustomerConfirmation(order);
 }
 
+// ===== Show Success Page =====
 function showOrderSuccess(order) {
     const container = document.getElementById('checkoutContent');
-    const paymentLabel = {
-        'easypaisa': 'Easypaisa',
-        'bank': 'UBL Bank',
-        'jazzcash': 'JazzCash',
-        'cod': 'Cash on Delivery'
-    }[order.payment] || order.payment;
-
+    const paymentLabel = paymentLabels[order.payment] || order.payment;
     const trackLink = 'https://intasam-ali.github.io/ash/track-order.html?order=' + order.orderNumber;
 
     container.innerHTML = `
@@ -332,46 +339,30 @@ function showOrderSuccess(order) {
 
             ${order.payment === 'easypaisa' ? `
                 <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:12px; padding:20px; margin:20px auto; max-width:450px; text-align:left;">
-                    <h4 style="color:#c2410c; margin-bottom:10px; font-size:15px;">
-                        💳 Payment Instructions
-                    </h4>
-                    <p style="font-size:14px; color:#9a3412; margin:5px 0;">
-                        Send Rs. <strong>${order.total.toLocaleString()}</strong> to:
-                    </p>
+                    <h4 style="color:#c2410c; margin-bottom:10px; font-size:15px;">💳 Payment Instructions</h4>
+                    <p style="font-size:14px; color:#9a3412; margin:5px 0;">Send Rs. <strong>${order.total.toLocaleString()}</strong> to:</p>
                     <p style="font-size:16px; color:#111827; font-weight:800; margin:8px 0; padding:10px; background:white; border-radius:8px;">
                         📱 Easypaisa: 0319-7745919
                     </p>
-                    <p style="font-size:14px; color:#9a3412; margin:5px 0;">
-                        Account Name: <strong>Intisam Ali</strong>
-                    </p>
+                    <p style="font-size:14px; color:#9a3412; margin:5px 0;">Account Name: <strong>Intisam Ali</strong></p>
                     <p style="font-size:13px; color:#9a3412; margin-top:12px;">
                         📸 Payment screenshot WhatsApp par bhejein:
-                        <a href="https://wa.me/923197745919" target="_blank" style="color:#7c3aed; font-weight:700; text-decoration:none;">
-                            0319-7745919
-                        </a>
+                        <a href="https://wa.me/923197745919" target="_blank" style="color:#7c3aed; font-weight:700;">0319-7745919</a>
                     </p>
                 </div>
             ` : ''}
 
             ${order.payment === 'bank' ? `
                 <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:12px; padding:20px; margin:20px auto; max-width:450px; text-align:left;">
-                    <h4 style="color:#c2410c; margin-bottom:10px; font-size:15px;">
-                        🏦 Bank Transfer Instructions
-                    </h4>
-                    <p style="font-size:14px; color:#9a3412; margin:5px 0;">
-                        Transfer Rs. <strong>${order.total.toLocaleString()}</strong> to:
-                    </p>
+                    <h4 style="color:#c2410c; margin-bottom:10px; font-size:15px;">🏦 Bank Transfer Instructions</h4>
+                    <p style="font-size:14px; color:#9a3412; margin:5px 0;">Transfer Rs. <strong>${order.total.toLocaleString()}</strong> to:</p>
                     <p style="font-size:15px; color:#111827; font-weight:800; margin:8px 0; padding:10px; background:white; border-radius:8px;">
                         🏦 UBL: 0620296738441
                     </p>
-                    <p style="font-size:14px; color:#9a3412; margin:5px 0;">
-                        Account Name: <strong>Intisam Ali</strong>
-                    </p>
+                    <p style="font-size:14px; color:#9a3412; margin:5px 0;">Account Name: <strong>Intisam Ali</strong></p>
                     <p style="font-size:13px; color:#9a3412; margin-top:12px;">
                         📸 Screenshot WhatsApp par bhejein:
-                        <a href="https://wa.me/923197745919" target="_blank" style="color:#7c3aed; font-weight:700; text-decoration:none;">
-                            0319-7745919
-                        </a>
+                        <a href="https://wa.me/923197745919" target="_blank" style="color:#7c3aed; font-weight:700;">0319-7745919</a>
                     </p>
                 </div>
             ` : ''}
@@ -391,18 +382,9 @@ function showOrderSuccess(order) {
         </div>
     `;
 }
-/* ============================================
-   SEND ORDER TO ADMIN (WhatsApp)
-   ============================================ */
-function sendWhatsAppOrder(order) {
-    const paymentLabels = {
-        'easypaisa': 'Easypaisa',
-        'bank': 'UBL Bank',
-        'jazzcash': 'JazzCash',
-        'cod': 'Cash on Delivery'
-    };
 
-    // Short items list
+// ===== Send Order to Admin (WhatsApp) =====
+function sendWhatsAppOrder(order) {
     let itemsText = '';
     order.items.forEach(function(item, index) {
         itemsText += (index + 1) + '. ' + item.name + ' x' + item.quantity + ' = Rs. ' + (item.price * item.quantity).toLocaleString();
@@ -438,24 +420,19 @@ function sendWhatsAppOrder(order) {
     }, 500);
 }
 
-/* ============================================
-   SEND CONFIRMATION TO CUSTOMER (WhatsApp)
-   ============================================ */
+// ===== Send Confirmation to Customer (WhatsApp) =====
 function sendCustomerConfirmation(order) {
     const orderDate = new Date(order.date).toLocaleString('en-PK', {
         day: '2-digit', month: 'short', year: 'numeric'
     });
 
-    // Build items list
     let itemsText = '';
     order.items.forEach(function(item) {
         itemsText += '• ' + item.name + ' x' + item.quantity + '%0A';
     });
 
-    // Tracking link
     const trackLink = 'https://intasam-ali.github.io/ash/track-order.html?order=' + order.orderNumber;
 
-    // Payment instructions
     let paymentMsg = '';
     if (order.payment === 'easypaisa') {
         paymentMsg = '*Payment Karne Ke Liye:*%0A' +
@@ -467,23 +444,18 @@ function sendCustomerConfirmation(order) {
             '🏦 UBL Bank: *0620296738441*%0A' +
             '👤 Name: *Intisam Ali*%0A' +
             '💰 Amount: *Rs. ' + order.total.toLocaleString() + '*%0A';
-    } else if (order.payment === 'jazzcash') {
-        paymentMsg = '*Payment:* JazzCash details WhatsApp par bhejenge.%0A';
     }
 
     const message =
         '🎉 *GEN.Z GADGETS* 🎉%0A' +
         '━━━━━━━━━━━━━━━━%0A%0A' +
         '*Aapka Order Confirm Ho Gaya!* ✅%0A%0A' +
-        '━━━━━━━━━━━━━━━━%0A' +
         '📋 *ORDER NUMBER*%0A' +
-        '`' + order.orderNumber + '`%0A' +
-        '━━━━━━━━━━━━━━━━%0A%0A' +
+        '`' + order.orderNumber + '`%0A%0A' +
         '*Order Date:* ' + orderDate + '%0A%0A' +
         '👤 *Customer:* ' + order.customer.name + '%0A' +
         '📱 *Phone:* ' + order.customer.phone + '%0A' +
-        '📍 *City:* ' + order.customer.city + '%0A' +
-        '🏠 *Address:* ' + order.customer.address + '%0A%0A' +
+        '📍 *City:* ' + order.customer.city + '%0A%0A' +
         '━━━━━━━━━━━━━━━━%0A' +
         '🛍️ *ORDER ITEMS*%0A' +
         '━━━━━━━━━━━━━━━━%0A' +
@@ -491,28 +463,29 @@ function sendCustomerConfirmation(order) {
         '━━━━━━━━━━━━━━━━%0A' +
         '💰 *Subtotal:* Rs. ' + order.subtotal.toLocaleString() + '%0A' +
         '🚚 *Delivery:* ' + (order.deliveryFee === 0 ? 'FREE ✅' : 'Rs. ' + order.deliveryFee.toLocaleString()) + '%0A' +
-        '💵 *TOTAL:* *Rs. ' + order.total.toLocaleString() + '*%0A' +
-        '━━━━━━━━━━━━━━━━%0A%0A' +
-        '💳 *Payment Method:* ' + (paymentLabels[order.payment] || order.payment) + '%0A%0A' +
+        '💵 *TOTAL:* *Rs. ' + order.total.toLocaleString() + '*%0A%0A' +
+        '💳 *Payment:* ' + (paymentLabels[order.payment] || order.payment) + '%0A%0A' +
         '━━━━━━━━━━━━━━━━%0A' +
         '🔗 *TRACK YOUR ORDER*%0A' +
         '━━━━━━━━━━━━━━━━%0A' +
         trackLink + '%0A%0A' +
-        'Order ka status dekhne ke liye upar wala link dabayein ya apna order number website par daalein.%0A%0A' +
+        'Order ka status dekhne ke liye upar wala link dabayein%0A%0A' +
         '━━━━━━━━━━━━━━━━%0A' +
         paymentMsg + '%0A' +
-        '━━━━━━━━━━━━━━━━%0A' +
-        '📸 Payment karne ke baad screenshot bhejein%0A%0A' +
+        '📸 Screenshot bhejein payment ke baad%0A%0A' +
         '━━━━━━━━━━━━━━━━%0A' +
         'Shukriya! 🛍️%0A' +
         'GEN.Z GADGETS';
 
-    // Send to customer's own WhatsApp (self chat)
-    // This opens a WhatsApp chat that customer can send to themselves
     const customerPhone = order.customer.phone.replace(/[^0-9]/g, '').replace(/^0/, '92');
     const whatsappUrl = 'https://wa.me/' + customerPhone + '?text=' + message;
 
     setTimeout(function() {
         window.open(whatsappUrl, '_blank');
-    }, 2000);
+    }, 2500);
 }
+
+// ===== Start =====
+document.addEventListener('DOMContentLoaded', function() {
+    loadCheckout();
+});
