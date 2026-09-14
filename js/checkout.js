@@ -350,6 +350,9 @@ function showOrderSuccess(order) {
     `;
 }
 
+/* ============================================
+   SEND ORDER TO ADMIN (WhatsApp)
+   ============================================ */
 function sendWhatsAppOrder(order) {
     const paymentLabels = {
         'easypaisa': 'Easypaisa',
@@ -365,12 +368,10 @@ function sendWhatsAppOrder(order) {
         if (index < order.items.length - 1) itemsText += '%0A';
     });
 
-    // Short date format
     const orderDate = new Date(order.date).toLocaleString('en-PK', {
         day: '2-digit', month: 'short', year: 'numeric'
     });
 
-    // Build compact message
     const message =
         '🛒 *NEW ORDER* %0A' +
         '━━━━━━━━━━━━━━%0A' +
@@ -395,6 +396,82 @@ function sendWhatsAppOrder(order) {
         window.open(whatsappUrl, '_blank');
     }, 500);
 }
-document.addEventListener('DOMContentLoaded', function() {
-    loadCheckout();
-});
+
+/* ============================================
+   SEND CONFIRMATION TO CUSTOMER (WhatsApp)
+   ============================================ */
+function sendCustomerConfirmation(order) {
+    const orderDate = new Date(order.date).toLocaleString('en-PK', {
+        day: '2-digit', month: 'short', year: 'numeric'
+    });
+
+    // Build items list
+    let itemsText = '';
+    order.items.forEach(function(item) {
+        itemsText += '• ' + item.name + ' x' + item.quantity + '%0A';
+    });
+
+    // Tracking link
+    const trackLink = 'https://intasam-ali.github.io/ash/track-order.html?order=' + order.orderNumber;
+
+    // Payment instructions
+    let paymentMsg = '';
+    if (order.payment === 'easypaisa') {
+        paymentMsg = '*Payment Karne Ke Liye:*%0A' +
+            '📱 Easypaisa: *0319-7745919*%0A' +
+            '👤 Name: *Intisam Ali*%0A' +
+            '💰 Amount: *Rs. ' + order.total.toLocaleString() + '*%0A';
+    } else if (order.payment === 'bank') {
+        paymentMsg = '*Payment Karne Ke Liye:*%0A' +
+            '🏦 UBL Bank: *0620296738441*%0A' +
+            '👤 Name: *Intisam Ali*%0A' +
+            '💰 Amount: *Rs. ' + order.total.toLocaleString() + '*%0A';
+    } else if (order.payment === 'jazzcash') {
+        paymentMsg = '*Payment:* JazzCash details WhatsApp par bhejenge.%0A';
+    }
+
+    const message =
+        '🎉 *GEN.Z GADGETS* 🎉%0A' +
+        '━━━━━━━━━━━━━━━━%0A%0A' +
+        '*Aapka Order Confirm Ho Gaya!* ✅%0A%0A' +
+        '━━━━━━━━━━━━━━━━%0A' +
+        '📋 *ORDER NUMBER*%0A' +
+        '`' + order.orderNumber + '`%0A' +
+        '━━━━━━━━━━━━━━━━%0A%0A' +
+        '*Order Date:* ' + orderDate + '%0A%0A' +
+        '👤 *Customer:* ' + order.customer.name + '%0A' +
+        '📱 *Phone:* ' + order.customer.phone + '%0A' +
+        '📍 *City:* ' + order.customer.city + '%0A' +
+        '🏠 *Address:* ' + order.customer.address + '%0A%0A' +
+        '━━━━━━━━━━━━━━━━%0A' +
+        '🛍️ *ORDER ITEMS*%0A' +
+        '━━━━━━━━━━━━━━━━%0A' +
+        itemsText + '%0A' +
+        '━━━━━━━━━━━━━━━━%0A' +
+        '💰 *Subtotal:* Rs. ' + order.subtotal.toLocaleString() + '%0A' +
+        '🚚 *Delivery:* ' + (order.deliveryFee === 0 ? 'FREE ✅' : 'Rs. ' + order.deliveryFee.toLocaleString()) + '%0A' +
+        '💵 *TOTAL:* *Rs. ' + order.total.toLocaleString() + '*%0A' +
+        '━━━━━━━━━━━━━━━━%0A%0A' +
+        '💳 *Payment Method:* ' + (paymentLabels[order.payment] || order.payment) + '%0A%0A' +
+        '━━━━━━━━━━━━━━━━%0A' +
+        '🔗 *TRACK YOUR ORDER*%0A' +
+        '━━━━━━━━━━━━━━━━%0A' +
+        trackLink + '%0A%0A' +
+        'Order ka status dekhne ke liye upar wala link dabayein ya apna order number website par daalein.%0A%0A' +
+        '━━━━━━━━━━━━━━━━%0A' +
+        paymentMsg + '%0A' +
+        '━━━━━━━━━━━━━━━━%0A' +
+        '📸 Payment karne ke baad screenshot bhejein%0A%0A' +
+        '━━━━━━━━━━━━━━━━%0A' +
+        'Shukriya! 🛍️%0A' +
+        'GEN.Z GADGETS';
+
+    // Send to customer's own WhatsApp (self chat)
+    // This opens a WhatsApp chat that customer can send to themselves
+    const customerPhone = order.customer.phone.replace(/[^0-9]/g, '').replace(/^0/, '92');
+    const whatsappUrl = 'https://wa.me/' + customerPhone + '?text=' + message;
+
+    setTimeout(function() {
+        window.open(whatsappUrl, '_blank');
+    }, 2000);
+}
