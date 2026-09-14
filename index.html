@@ -66,6 +66,7 @@
     <a href="#categories">Categories</a>
     <a href="#products">Products</a>
     <a href="track-order.html">Track Order</a>
+    <a href="#reviews">Reviews</a>        
     <a href="#about">About</a>
     <a href="#contact">Contact</a>
 </nav>
@@ -195,7 +196,206 @@
 
     </section>
 
+<!-- ============ STORE RATING ============ -->
+<section class="store-rating-section" id="reviews">
+    <div class="container">
+        <div class="rating-header">
+            <div class="rating-summary">
+                <div class="rating-big" id="storeRatingBig">0.0</div>
+                <div class="rating-stars" id="storeRatingStars">☆☆☆☆☆</div>
+                <div class="rating-count" id="storeRatingCount">0 reviews</div>
+            </div>
+            <div class="rating-info">
+                <h2>Customer Reviews</h2>
+                <p>Hamare customers ne kya kaha — dekhein!</p>
+                <a href="review.html" class="write-review-btn">
+                    <i class="fa-solid fa-pen"></i> Write a Review
+                </a>
+            </div>
+        </div>
+        <div class="reviews-grid" id="reviewsGrid">
+            <div class="review-loading">
+                <i class="fa-solid fa-spinner fa-spin"></i> Loading reviews...
+            </div>
+        </div>
+    </div>
+    /* ===== STORE RATING SECTION ===== */
+.store-rating-section {
+    padding: 70px 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
 
+.rating-header {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 40px;
+    align-items: center;
+    background: #fff;
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+    border: 1px solid #e2e8f0;
+}
+
+.rating-summary {
+    text-align: center;
+    padding: 20px;
+    border-right: 2px dashed #e2e8f0;
+}
+
+.rating-big {
+    font-size: 72px;
+    font-weight: 900;
+    color: #7c3aed;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.rating-stars {
+    font-size: 28px;
+    color: #f59e0b;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+}
+
+.rating-count {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.rating-info h2 {
+    font-size: 28px;
+    color: #111827;
+    margin-bottom: 8px;
+}
+
+.rating-info p {
+    color: #64748b;
+    margin-bottom: 20px;
+    font-size: 15px;
+}
+
+.write-review-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #7c3aed, #06b6d4);
+    color: white;
+    text-decoration: none;
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.write-review-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(124,58,237,0.35);
+}
+
+.reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.review-loading {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 40px;
+    color: #94a3b8;
+}
+
+.review-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+}
+
+.review-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.review-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #06b6d4);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.review-name {
+    flex: 1;
+}
+
+.review-name strong {
+    display: block;
+    color: #111827;
+    font-size: 15px;
+}
+
+.review-name small {
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.review-stars {
+    color: #f59e0b;
+    font-size: 14px;
+    letter-spacing: 2px;
+}
+
+.review-text {
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.6;
+    flex: 1;
+}
+
+.review-product {
+    background: #ede9fe;
+    color: #7c3aed;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    align-self: flex-start;
+}
+
+@media (max-width: 900px) {
+    .rating-header { grid-template-columns: 1fr; gap: 20px; padding: 25px; }
+    .rating-summary { border-right: none; border-bottom: 2px dashed #e2e8f0; padding-bottom: 25px; }
+    .reviews-grid { grid-template-columns: repeat(2, 1fr); }
+    .rating-big { font-size: 60px; }
+}
+
+@media (max-width: 600px) {
+    .reviews-grid { grid-template-columns: 1fr; }
+    .rating-info h2 { font-size: 22px; }
+}
+</section>
     <!-- ================= PRODUCTS ================= -->
 
     <section class="products-section" id="products">
@@ -372,6 +572,82 @@
 <script type="module" src="js/firebase.js"></script>
 <script src="js/products.js"></script>
 <script src="js/script.js"></script>
+<script type="module" src="js/firebase.js"></script>
+<script>
+    function waitForFirebase(callback) {
+        if (window.firebaseDB) callback();
+        else setTimeout(function() { waitForFirebase(callback); }, 100);
+    }
 
+    async function loadReviews() {
+        waitForFirebase(async function() {
+            try {
+                const { db, collection, getDocs } = window.firebaseDB;
+                const snapshot = await getDocs(collection(db, 'reviews'));
+                const reviews = [];
+                snapshot.forEach(function(doc) {
+                    reviews.push(doc.data());
+                });
+                reviews.sort(function(a, b) {
+                    return new Date(b.date) - new Date(a.date);
+                });
+
+                // Calculate average rating
+                let totalRating = 0;
+                reviews.forEach(function(r) { totalRating += r.rating; });
+                const avgRating = reviews.length > 0 ? (totalRating / reviews.length).toFixed(1) : '0.0';
+
+                // Update rating summary
+                document.getElementById('storeRatingBig').textContent = avgRating;
+                document.getElementById('storeRatingCount').textContent = reviews.length + ' review' + (reviews.length !== 1 ? 's' : '');
+
+                // Stars for average
+                const fullStars = Math.round(avgRating);
+                let starsHTML = '';
+                for (let i = 1; i <= 5; i++) {
+                    starsHTML += i <= fullStars ? '★' : '☆';
+                }
+                document.getElementById('storeRatingStars').textContent = starsHTML;
+
+                // Render reviews
+                const grid = document.getElementById('reviewsGrid');
+                if (reviews.length === 0) {
+                    grid.innerHTML = '<div class="review-loading">Koi review nahi hai. Pehla review aap likhein!</div>';
+                    return;
+                }
+
+                grid.innerHTML = reviews.slice(0, 6).map(function(r) {
+                    const initials = r.name.split(' ').map(function(n) { return n[0]; }).join('').toUpperCase().slice(0, 2);
+                    const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+                    const dateStr = new Date(r.date).toLocaleDateString('en-PK', {
+                        day: 'numeric', month: 'short', year: 'numeric'
+                    });
+
+                    return '<div class="review-card">' +
+                        '<div class="review-top">' +
+                            '<div class="review-avatar">' + initials + '</div>' +
+                            '<div class="review-name">' +
+                                '<strong>' + r.name + '</strong>' +
+                                '<small>' + dateStr + '</small>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="review-stars">' + stars + '</div>' +
+                        '<div class="review-text">' + r.text + '</div>' +
+                        (r.productName && r.productName !== 'Store' ? '<div class="review-product">📦 ' + r.productName + '</div>' : '') +
+                    '</div>';
+                }).join('');
+
+            } catch (error) {
+                console.error('Reviews load error:', error);
+                document.getElementById('reviewsGrid').innerHTML = 
+                    '<div class="review-loading">Reviews load nahi ho sake</div>';
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(loadReviews, 500);
+    });
+</script>
 </body>
 </html>
