@@ -358,48 +358,36 @@ function sendWhatsAppOrder(order) {
         'cod': 'Cash on Delivery'
     };
 
-    // Build items list - each on new line
+    // Short items list
     let itemsText = '';
     order.items.forEach(function(item, index) {
-        itemsText += (index + 1) + '. ' + item.name + '%0A' +
-                      '   Quantity: ' + item.quantity + '%0A' +
-                      '   Price: Rs. ' + item.price.toLocaleString() + '%0A' +
-                      '   Total: Rs. ' + (item.price * item.quantity).toLocaleString() + '%0A%0A';
+        itemsText += (index + 1) + '. ' + item.name + ' x' + item.quantity + ' = Rs. ' + (item.price * item.quantity).toLocaleString();
+        if (index < order.items.length - 1) itemsText += '%0A';
     });
 
+    // Short date format
+    const orderDate = new Date(order.date).toLocaleString('en-PK', {
+        day: '2-digit', month: 'short', year: 'numeric'
+    });
+
+    // Build compact message
     const message =
-        '🛒 *NEW ORDER RECEIVED* 🛒%0A' +
-        '━━━━━━━━━━━━━━━━━━━━━%0A%0A' +
-        '📋 *Order Number:* %0A' +
-        '`' + order.orderNumber + '`%0A%0A' +
-        '📅 *Date & Time:*%0A' +
-        new Date(order.date).toLocaleString('en-PK', {
-            day: 'numeric', month: 'long', year: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-        }) + '%0A%0A' +
-        '━━━━━━━━━━━━━━━━━━━━━%0A' +
-        '👤 *CUSTOMER DETAILS*%0A' +
-        '━━━━━━━━━━━━━━━━━━━━━%0A%0A' +
-        '▪️ *Name:* ' + order.customer.name + '%0A' +
-        '▪️ *Phone:* ' + order.customer.phone + '%0A' +
-        '▪️ *Email:* ' + order.customer.email + '%0A' +
-        '▪️ *City:* ' + order.customer.city + '%0A' +
-        '▪️ *Address:* ' + order.customer.address + '%0A' +
-        '▪️ *Instructions:* ' + order.customer.instructions + '%0A%0A' +
-        '━━━━━━━━━━━━━━━━━━━━━%0A' +
-        '🛍️ *ORDER ITEMS*%0A' +
-        '━━━━━━━━━━━━━━━━━━━━━%0A%0A' +
-        itemsText +
-        '━━━━━━━━━━━━━━━━━━━━━%0A' +
-        '💰 *PAYMENT SUMMARY*%0A' +
-        '━━━━━━━━━━━━━━━━━━━━━%0A%0A' +
-        '▪️ *Subtotal:* Rs. ' + order.subtotal.toLocaleString() + '%0A' +
-        '▪️ *Delivery:* ' + (order.deliveryFee === 0 ? 'FREE ✅' : 'Rs. ' + order.deliveryFee.toLocaleString()) + '%0A' +
-        '▪️ *Total:* *Rs. ' + order.total.toLocaleString() + '*%0A%0A' +
-        '💳 *Payment Method:* ' + (paymentLabels[order.payment] || order.payment) + '%0A%0A' +
-        '━━━━━━━━━━━━━━━━━━━━━%0A' +
-        '✅ *Please confirm this order.*%0A' +
-        '━━━━━━━━━━━━━━━━━━━━━';
+        '🛒 *NEW ORDER* %0A' +
+        '━━━━━━━━━━━━━━%0A' +
+        '*Order:* ' + order.orderNumber + '%0A' +
+        '*Date:* ' + orderDate + '%0A' +
+        '━━━━━━━━━━━━━━%0A' +
+        '*Customer:* ' + order.customer.name + '%0A' +
+        '*Phone:* ' + order.customer.phone + '%0A' +
+        '*City:* ' + order.customer.city + '%0A' +
+        '*Address:* ' + order.customer.address + '%0A' +
+        '━━━━━━━━━━━━━━%0A' +
+        '*Items:*%0A' + itemsText + '%0A' +
+        '━━━━━━━━━━━━━━%0A' +
+        '*Total:* Rs. ' + order.total.toLocaleString() + '%0A' +
+        '*Payment:* ' + (paymentLabels[order.payment] || order.payment) + '%0A' +
+        '━━━━━━━━━━━━━━%0A' +
+        '✅ Please confirm.';
 
     const whatsappUrl = 'https://wa.me/923197745919?text=' + message;
 
@@ -407,7 +395,6 @@ function sendWhatsAppOrder(order) {
         window.open(whatsappUrl, '_blank');
     }, 500);
 }
-
 document.addEventListener('DOMContentLoaded', function() {
     loadCheckout();
 });
