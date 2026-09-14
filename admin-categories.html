@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Categories | GEN.Z GADGETS Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; padding-bottom: 80px; }
+
+        .mobile-header {
+            background: #111827; color: white; padding: 15px 20px;
+            position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .mobile-header .logo { font-size: 20px; font-weight: 900; }
+        .mobile-header .logo span { color: #7c3aed; }
+        .mobile-header a { color: #94a3b8; text-decoration: none; font-size: 13px; }
+
+        .mobile-container { padding: 15px; max-width: 500px; margin: 0 auto; }
+
+        .page-title {
+            font-size: 22px; color: #111827; margin-bottom: 5px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .page-title i { color: #7c3aed; }
+        .page-subtitle { color: #64748b; font-size: 13px; margin-bottom: 20px; }
+
+        .stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 10px; margin-bottom: 20px;
+        }
+        .stat-box {
+            background: white; border-radius: 12px; padding: 15px;
+            text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .stat-box .num {
+            font-size: 24px; font-weight: 900; color: #7c3aed; display: block;
+        }
+        .stat-box .label { font-size: 11px; color: #94a3b8; }
+
+        .category-item {
+            background: white; border-radius: 12px; padding: 15px;
+            margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 12px;
+        }
+        .cat-icon {
+            width: 50px; height: 50px; border-radius: 12px;
+            background: #ede9fe; color: #7c3aed;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; flex-shrink: 0;
+        }
+        .cat-info { flex: 1; min-width: 0; }
+        .cat-info h4 { font-size: 15px; margin-bottom: 3px; color: #111827; }
+        .cat-info p { font-size: 12px; color: #64748b; }
+
+        .cat-actions { display: flex; gap: 6px; flex-shrink: 0; }
+        .cat-actions button {
+            width: 36px; height: 36px; border: none; border-radius: 8px;
+            cursor: pointer; font-size: 14px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .cat-actions .edit { background: #ede9fe; color: #7c3aed; }
+        .cat-actions .delete { background: #fee2e2; color: #dc2626; }
+        .cat-actions .up, .cat-actions .down { background: #dbeafe; color: #2563eb; }
+
+        .mobile-fab {
+            position: fixed; bottom: 20px; right: 20px;
+            width: 60px; height: 60px; background: #7c3aed; color: white;
+            border: none; border-radius: 50%; font-size: 28px;
+            box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+            cursor: pointer; z-index: 99;
+        }
+        .mobile-fab:active { transform: scale(0.95); }
+
+        .mobile-form {
+            background: white; border-radius: 16px; padding: 20px;
+            margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            display: none;
+        }
+        .mobile-form.active { display: block; }
+        .mobile-form .form-group { margin-bottom: 14px; }
+        .mobile-form .form-group label {
+            font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px; color: #1e293b;
+        }
+        .mobile-form .form-group input,
+        .mobile-form .form-group select,
+        .mobile-form .form-group textarea {
+            width: 100%; padding: 10px 12px; border: 1px solid #d1d5db;
+            border-radius: 8px; font-size: 14px; background: #f8fafc;
+            font-family: inherit;
+        }
+        .mobile-form .form-group input:focus,
+        .mobile-form .form-group select:focus {
+            outline: none; border-color: #7c3aed; background: white;
+        }
+        .mobile-form .form-actions { display: flex; gap: 10px; }
+        .mobile-form .form-actions button {
+            flex: 1; padding: 12px; border: none; border-radius: 10px;
+            font-weight: 700; font-size: 15px; cursor: pointer;
+        }
+        .mobile-form .form-actions .save { background: #7c3aed; color: white; }
+        .mobile-form .form-actions .cancel { background: #f1f5f9; color: #64748b; }
+
+        .icon-preview {
+            width: 60px; height: 60px; border-radius: 12px;
+            background: #ede9fe; color: #7c3aed;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 26px; margin: 10px 0;
+        }
+
+        .mobile-empty {
+            text-align: center; padding: 50px 20px;
+            background: white; border-radius: 14px;
+        }
+        .mobile-empty i {
+            font-size: 50px; color: #cbd5e1; margin-bottom: 15px; display: block;
+        }
+        .mobile-empty p { color: #94a3b8; }
+
+        .toast {
+            position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+            background: #111827; color: white; padding: 12px 24px;
+            border-radius: 12px; font-weight: 600; z-index: 999;
+            display: none; max-width: 90%; text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .toast.show { display: block; }
+
+        .loading-box {
+            text-align: center; padding: 50px; color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-header">
+        <div class="logo">GEN.Z <span>GADGETS</span></div>
+        <div style="display:flex; gap:12px; align-items:center;">
+            <a href="admin-mobile.html"><i class="fa-solid fa-box"></i> Products</a>
+            <a href="admin-orders.html"><i class="fa-solid fa-receipt"></i> Orders</a>
+            <a href="admin-reviews.html"><i class="fa-solid fa-star"></i> Reviews</a>
+            <a href="index.html"><i class="fa-solid fa-store"></i></a>
+        </div>
+    </div>
+
+    <div class="mobile-container">
+        <h1 class="page-title"><i class="fa-solid fa-layer-group"></i> Categories</h1>
+        <p class="page-subtitle">Homepage par dikhne wali categories manage karein</p>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <span class="num" id="totalCats">0</span>
+                <span class="label">Total Categories</span>
+            </div>
+            <div class="stat-box">
+                <span class="num" id="activeCats">0</span>
+                <span class="label">Active</span>
+            </div>
+        </div>
+
+        <div class="mobile-form" id="categoryForm">
+            <h3 id="formTitle" style="margin-bottom:15px;">Add New Category</h3>
+            <input type="hidden" id="editId">
+
+            <div class="form-group">
+                <label>Category Name *</label>
+                <input type="text" id="catName" placeholder="e.g. Smartwatches">
+            </div>
+
+            <div class="form-group">
+                <label>Description *</label>
+                <input type="text" id="catDescription" placeholder="e.g. Smart watches for everyone">
+            </div>
+
+            <div class="form-group">
+                <label>Icon *</label>
+                <select id="catIcon" onchange="updateIconPreview()">
+                    <option value="fa-mobile-screen">📱 Phone / Mobile</option>
+                    <option value="fa-bolt">⚡ Charger / Bolt</option>
+                    <option value="fa-headphones">🎧 Headphones</option>
+                    <option value="fa-battery-full">🔋 Battery / Power</option>
+                    <option value="fa-clock">⌚ Smartwatch / Clock</option>
+                    <option value="fa-plug">🔌 Plug / Cable</option>
+                    <option value="fa-camera">📷 Camera</option>
+                    <option value="fa-tablet">📱 Tablet</option>
+                    <option value="fa-computer-mouse">🖱️ Mouse</option>
+                    <option value="fa-keyboard">⌨️ Keyboard</option>
+                    <option value="fa-gamepad">🎮 Game Controller</option>
+                    <option value="fa-tv">📺 TV / Screen</option>
+                    <option value="fa-microphone">🎤 Microphone</option>
+                    <option value="fa-speaker">🔊 Speaker</option>
+                    <option value="fa-shield-halved">🛡️ Protection</option>
+                    <option value="fa-box">📦 Box / General</option>
+                </select>
+            </div>
+
+            <div class="icon-preview" id="iconPreview">
+                <i class="fa-solid fa-mobile-screen"></i>
+            </div>
+
+            <div class="form-actions">
+                <button class="cancel" onclick="closeForm()">Cancel</button>
+                <button class="save" onclick="saveCategory()"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+            </div>
+        </div>
+
+        <div id="categoriesList">
+            <div class="loading-box">
+                <i class="fa-solid fa-spinner fa-spin"></i> Loading categories...
+            </div>
+        </div>
+    </div>
+
+    <button class="mobile-fab" onclick="openForm()">
+        <i class="fa-solid fa-plus"></i>
+    </button>
+
+    <div class="toast" id="toast"></div>
+
+    <script type="module" src="js/firebase.js"></script>
+    <script>
+        let categories = [];
+        let editingId = null;
+
+        function waitForFirebase(callback) {
+            if (window.firebaseDB) callback();
+            else setTimeout(function() { waitForFirebase(callback); }, 100);
+        }
+
+        async function fetchCategories() {
+            return new Promise(function(resolve) {
+                waitForFirebase(async function() {
+                    try {
+                        const { db, collection, getDocs } = window.firebaseDB;
+                        const snapshot = await getDocs(collection(db, 'categories'));
+                        const list = [];
+                        snapshot.forEach(function(doc) {
+                            list.push(doc.data());
+                        });
+                        list.sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
+                        resolve(list);
+                    } catch (error) {
+                        console.error('Fetch error:', error);
+                        resolve([]);
+                    }
+                });
+            });
+        }
+
+        async function saveCategoryToFirebase(category) {
+            return new Promise(function(resolve) {
+                waitForFirebase(async function() {
+                    try {
+                        const { db, doc, setDoc } = window.firebaseDB;
+                        await setDoc(doc(db, 'categories', String(category.id)), category);
+                        resolve(true);
+                    } catch (error) {
+                        console.error('Save error:', error);
+                        resolve(false);
+                    }
+                });
+            });
+        }
+
+        async function deleteCategoryFromFirebase(categoryId) {
+            return new Promise(function(resolve) {
+                waitForFirebase(async function() {
+                    try {
+                        const { db, doc, deleteDoc } = window.firebaseDB;
+                        await deleteDoc(doc(db, 'categories', String(categoryId)));
+                        resolve(true);
+                    } catch (error) {
+                        console.error('Delete error:', error);
+                        resolve(false);
+                    }
+                });
+            });
+        }
+
+        async function loadCategories() {
+            const container = document.getElementById('categoriesList');
+            container.innerHTML = '<div class="loading-box"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>';
+
+            categories = await fetchCategories();
+            renderCategories();
+            updateStats();
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('categoriesList');
+
+            if (categories.length === 0) {
+                container.innerHTML = `
+                    <div class="mobile-empty">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <p>Koi category nahi hai.</p>
+                        <p style="font-size:13px; margin-top:5px;">+ button dabayein nayi add karne ke liye</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = categories.map(function(c, index) {
+                return `
+                    <div class="category-item">
+                        <div class="cat-icon"><i class="fa-solid ${c.icon || 'fa-box'}"></i></div>
+                        <div class="cat-info">
+                            <h4>${c.name}</h4>
+                            <p>${c.description || ''}</p>
+                        </div>
+                        <div class="cat-actions">
+                            <button class="up" onclick="moveUp(${index})" ${index === 0 ? 'style="opacity:0.3; cursor:not-allowed;"' : ''}>
+                                <i class="fa-solid fa-arrow-up"></i>
+                            </button>
+                            <button class="down" onclick="moveDown(${index})" ${index === categories.length - 1 ? 'style="opacity:0.3; cursor:not-allowed;"' : ''}>
+                                <i class="fa-solid fa-arrow-down"></i>
+                            </button>
+                            <button class="edit" onclick="editCategory(${c.id})">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button class="delete" onclick="deleteCategory(${c.id})">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('totalCats').textContent = categories.length;
+            document.getElementById('activeCats').textContent = categories.length;
+        }
+
+        function updateIconPreview() {
+            const icon = document.getElementById('catIcon').value;
+            document.getElementById('iconPreview').innerHTML = '<i class="fa-solid ' + icon + '"></i>';
+        }
+
+        function openForm(category) {
+            const form = document.getElementById('categoryForm');
+            form.classList.add('active');
+
+            if (category) {
+                document.getElementById('formTitle').textContent = '✏️ Edit Category';
+                document.getElementById('editId').value = category.id;
+                document.getElementById('catName').value = category.name || '';
+                document.getElementById('catDescription').value = category.description || '';
+                document.getElementById('catIcon').value = category.icon || 'fa-box';
+                updateIconPreview();
+                editingId = category.id;
+            } else {
+                document.getElementById('formTitle').textContent = '➕ Add New Category';
+                document.getElementById('editId').value = '';
+                document.getElementById('catName').value = '';
+                document.getElementById('catDescription').value = '';
+                document.getElementById('catIcon').value = 'fa-mobile-screen';
+                updateIconPreview();
+                editingId = null;
+            }
+
+            form.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function closeForm() {
+            document.getElementById('categoryForm').classList.remove('active');
+        }
+
+        async function saveCategory() {
+            const name = document.getElementById('catName').value.trim();
+            const description = document.getElementById('catDescription').value.trim();
+            const icon = document.getElementById('catIcon').value;
+
+            if (!name) { showToast('❌ Category name likhein'); return; }
+            if (!description) { showToast('❌ Description likhein'); return; }
+
+            let list = await fetchCategories();
+            const editId = document.getElementById('editId').value;
+
+            if (editId) {
+                const index = list.findIndex(function(c) { return c.id === Number(editId); });
+                if (index !== -1) {
+                    list[index].name = name;
+                    list[index].description = description;
+                    list[index].icon = icon;
+                    const ok = await saveCategoryToFirebase(list[index]);
+                    if (!ok) { showToast('❌ Save failed'); return; }
+                }
+                showToast('✅ Category updated!');
+            } else {
+                const newId = list.length > 0 ? Math.max.apply(null, list.map(function(c) { return c.id; })) + 1 : 1;
+                const newOrder = list.length;
+                const newCat = {
+                    id: newId,
+                    name: name,
+                    description: description,
+                    icon: icon,
+                    order: newOrder
+                };
+                const ok = await saveCategoryToFirebase(newCat);
+                if (!ok) { showToast('❌ Save failed'); return; }
+                showToast('✅ Category added!');
+            }
+
+            await loadCategories();
+            closeForm();
+        }
+
+        function editCategory(id) {
+            const category = categories.find(function(c) { return c.id === id; });
+            if (category) openForm(category);
+        }
+
+        async function deleteCategory(id) {
+            const category = categories.find(function(c) { return c.id === id; });
+            if (!category) return;
+
+            if (!confirm('Delete "' + category.name + '" category?')) return;
+
+            const ok = await deleteCategoryFromFirebase(id);
+            if (ok) {
+                await loadCategories();
+                showToast('🗑️ Category deleted');
+            } else {
+                showToast('❌ Delete failed');
+            }
+        }
+
+        async function moveUp(index) {
+            if (index === 0) return;
+            const list = await fetchCategories();
+            const temp = list[index].order;
+            list[index].order = list[index - 1].order;
+            list[index - 1].order = temp;
+
+            await saveCategoryToFirebase(list[index]);
+            await saveCategoryToFirebase(list[index - 1]);
+            await loadCategories();
+            showToast('⬆️ Moved up');
+        }
+
+        async function moveDown(index) {
+            const list = await fetchCategories();
+            if (index === list.length - 1) return;
+            const temp = list[index].order;
+            list[index].order = list[index + 1].order;
+            list[index + 1].order = temp;
+
+            await saveCategoryToFirebase(list[index]);
+            await saveCategoryToFirebase(list[index + 1]);
+            await loadCategories();
+            showToast('⬇️ Moved down');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(function() { toast.classList.remove('show'); }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(loadCategories, 500);
+        });
+    </script>
+</body>
+</html>
