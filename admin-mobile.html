@@ -12,10 +12,21 @@
             background: #111827; color: white; padding: 15px 20px;
             position: sticky; top: 0; z-index: 100;
             display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 10px;
         }
         .mobile-header .logo { font-size: 20px; font-weight: 900; }
         .mobile-header .logo span { color: #7c3aed; }
-        .mobile-header a { color: #94a3b8; text-decoration: none; font-size: 14px; }
+        .mobile-header .nav-links {
+            display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+        }
+        .mobile-header .nav-links a {
+            color: #94a3b8; text-decoration: none; font-size: 13px;
+            padding: 5px 10px; border-radius: 6px;
+            transition: 0.2s;
+        }
+        .mobile-header .nav-links a:hover {
+            background: #1e293b; color: white;
+        }
         .mobile-container { padding: 15px; max-width: 500px; margin: 0 auto; }
         .mobile-stats {
             display: grid; grid-template-columns: 1fr 1fr 1fr;
@@ -126,15 +137,14 @@
 </head>
 <body>
 
+    <!-- ===== HEADER ===== -->
     <div class="mobile-header">
         <div class="logo">GEN.Z <span>GADGETS</span></div>
-        <div style="display:flex; gap:15px; align-items:center;">
-           <a href="admin-reviews.html" style="font-size:13px;">
-    <i class="fa-solid fa-star"></i> Reviews
-</a>
-                <i class="fa-solid fa-receipt"></i> Orders
-            </a>
-            <a href="index.html"><i class="fa-solid fa-store"></i></a>
+        <div class="nav-links">
+            <a href="admin-orders.html"><i class="fa-solid fa-receipt"></i> Orders</a>
+            <a href="admin-reviews.html"><i class="fa-solid fa-star"></i> Reviews</a>
+            <a href="admin-categories.html"><i class="fa-solid fa-layer-group"></i> Categories</a>
+            <a href="index.html"><i class="fa-solid fa-store"></i> Store</a>
         </div>
     </div>
 
@@ -251,15 +261,12 @@
 
     <div class="toast" id="toast"></div>
 
-    <!-- Firebase Module -->
-       <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/firebase.js"></script>
     <script src="js/products.js"></script>
 
     <script>
-       
         let editingId = null;
 
-        // Wait for Firebase
         function waitForFirebase(callback) {
             if (window.firebaseDB) {
                 callback();
@@ -268,7 +275,6 @@
             }
         }
 
-        // ===== FETCH FROM FIREBASE =====
         async function fetchFromFirebase() {
             return new Promise(function(resolve) {
                 waitForFirebase(async function() {
@@ -290,7 +296,6 @@
             });
         }
 
-        // ===== SAVE TO FIREBASE =====
         async function saveToFirebase(product) {
             return new Promise(function(resolve) {
                 waitForFirebase(async function() {
@@ -307,7 +312,6 @@
             });
         }
 
-        // ===== DELETE FROM FIREBASE =====
         async function deleteFromFirebase(productId) {
             return new Promise(function(resolve) {
                 waitForFirebase(async function() {
@@ -323,7 +327,6 @@
             });
         }
 
-        // ===== RENDER PRODUCTS =====
         function renderProducts(list) {
             if (!list) list = products;
             const container = document.getElementById('productList');
@@ -352,7 +355,6 @@
             container.innerHTML = html;
         }
 
-        // ===== UPDATE STATS =====
         function updateStats() {
             const total = products.length;
             const active = products.filter(function(p) { return p.active !== false; }).length;
@@ -362,7 +364,6 @@
             document.getElementById('stockCount').textContent = stock;
         }
 
-        // ===== OPEN FORM =====
         function openForm(product) {
             const form = document.getElementById('productForm');
             form.classList.add('active');
@@ -403,13 +404,11 @@
             form.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // ===== CLOSE FORM =====
         function closeForm() {
             document.getElementById('productForm').classList.remove('active');
             document.getElementById('mobileImagePreview').style.display = 'none';
         }
 
-        // ===== SAVE PRODUCT =====
         async function saveProduct() {
             const name = document.getElementById('pName').value.trim();
             const category = document.getElementById('pCategory').value.trim();
@@ -452,13 +451,11 @@
                 showToast('✅ Product added!');
             }
 
-            // Save to localStorage
             localStorage.setItem('genzProducts', JSON.stringify(products));
             renderProducts();
             updateStats();
             closeForm();
 
-            // Save to Firebase (background)
             showToast('📤 Firebase par save ho raha hai...');
             const saved = await saveToFirebase(productData);
             if (saved) {
@@ -468,13 +465,11 @@
             }
         }
 
-        // ===== EDIT PRODUCT =====
         function editProduct(id) {
             const product = products.find(function(p) { return p.id === id; });
             if (product) openForm(product);
         }
 
-        // ===== DELETE PRODUCT =====
         async function deleteProduct(id) {
             const product = products.find(function(p) { return p.id === id; });
             if (confirm('Delete "' + (product ? product.name : 'this product') + '"?')) {
@@ -487,7 +482,6 @@
             }
         }
 
-        // ===== SEARCH =====
         function searchProducts(query) {
             const data = products;
             if (!query.trim()) { renderProducts(data); return; }
@@ -498,7 +492,6 @@
             renderProducts(filtered);
         }
 
-        // ===== IMAGE HELPERS =====
         function openImageHost() {
             window.open('https://imgbb.com', '_blank');
             showToast('📸 Upload, copy "Direct Link"');
@@ -509,7 +502,6 @@
             document.getElementById('mobileImagePreview').style.display = 'none';
         }
 
-        // ===== TOAST =====
         function showToast(msg) {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
@@ -517,7 +509,6 @@
             setTimeout(function() { toast.classList.remove('show'); }, 3000);
         }
 
-        // ===== IMAGE PREVIEW =====
         document.addEventListener('DOMContentLoaded', function() {
             const imageInput = document.getElementById('pImage');
             if (imageInput) {
@@ -533,7 +524,6 @@
             }
         });
 
-        // ===== START =====
         fetchFromFirebase().then(function(list) {
             products = list;
             renderProducts();
