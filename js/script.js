@@ -1,11 +1,55 @@
 /* =========================
    GEN.Z GADGETS
-   Main JavaScript - JSONBin Version
+   Main JavaScript - Firebase Version
 ========================= */
 
 let cartCount = 0;
 let productQuantity = 1;
 let currentProducts = [];
+
+// Wait for Firebase to load
+function waitForFirebase(callback) {
+    if (window.firebaseDB) {
+        callback();
+    } else {
+        setTimeout(function() { waitForFirebase(callback); }, 100);
+    }
+}
+
+// Fetch all reviews from Firebase
+async function fetchAllReviews() {
+    return new Promise(function(resolve) {
+        waitForFirebase(async function() {
+            try {
+                const { db, collection, getDocs } = window.firebaseDB;
+                const snapshot = await getDocs(collection(db, 'reviews'));
+                const reviews = [];
+                snapshot.forEach(function(doc) {
+                    reviews.push(doc.data());
+                });
+                resolve(reviews);
+            } catch (error) {
+                console.error('Reviews fetch error:', error);
+                resolve([]);
+            }
+        });
+    });
+}
+
+// Calculate rating for a product from reviews
+function calculateProductRating(productId, allReviews) {
+    const productReviews = allReviews.filter(function(r) {
+        return String(r.productId) === String(productId);
+    });
+    if (productReviews.length === 0) {
+        return { avg: 0, count: 0, stars: '☆☆☆☆☆' };
+    }
+    let total = 0;
+    productReviews.forEach(function(r) { total += r.rating; });
+    const avg = Math.round(total / productReviews.length);
+    const stars = '★'.repeat(avg) + '☆'.repeat(5 - avg);
+    return { avg: avg, count: productReviews.length, stars: stars };
+}
 
 function updateCartBadge() {
     const cart = JSON.parse(localStorage.getItem('genzCart')) || [];
@@ -15,6 +59,9 @@ function updateCartBadge() {
     cartCount = totalItems;
 }
 
+/* =========================
+   DISPLAY PRODUCTS (Homepage)
+========================= */
 async function displayProducts() {
     const productsGrid = document.getElementById('productsGrid');
     if (!productsGrid) return;
@@ -24,6 +71,9 @@ async function displayProducts() {
     const allProducts = await fetchProductsFromServer();
     const activeProducts = allProducts.filter(function(p) { return p.active !== false; });
     currentProducts = activeProducts;
+
+    // Fetch all reviews for rating calculation
+    const allReviews = await fetchAllReviews();
 
     productsGrid.innerHTML = '';
 
@@ -40,8 +90,16 @@ async function displayProducts() {
         const badgeHTML = product.badge
             ? '<span class="sale-badge">' + product.badge + '</span>'
             : '';
-        const rating = Math.min(product.rating || 5, 5);
-        const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+
+        // Use REAL rating from reviews
+        const ratingData = calculateProductRating(product.id, allReviews);
+
+        let ratingHTML;
+        if (ratingData.count > 0) {
+            ratingHTML = '<div class="rating">' + ratingData.stars + ' <span>(' + ratingData.count + ')</span></div>';
+        } else {
+            ratingHTML = '<div class="rating" style="color:#cbd5e1;">☆☆☆☆☆ <span>(0)</span></div>';
+        }
 
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
@@ -59,7 +117,7 @@ async function displayProducts() {
             '<div class="product-info">' +
                 '<p class="product-category">' + product.category + '</p>' +
                 '<h3>' + product.name + '</h3>' +
-                '<div class="rating">' + stars + ' <span>(' + (product.reviews || 0) + ')</span></div>' +
+                ratingHTML +
                 '<div class="price"><strong>Rs. ' + Number(product.price).toLocaleString() + '</strong>' + oldPriceHTML + '</div>' +
                 '<button class="add-cart-btn" data-product-id="' + product.id + '"><i class="fa-solid fa-cart-plus"></i> Add to Cart</button>' +
             '</div>';
@@ -78,6 +136,9 @@ async function displayProducts() {
     });
 }
 
+/* =========================
+   ADD TO CART
+========================= */
 async function addToCart(productId) {
     const allProducts = await fetchProductsFromServer();
     const product = allProducts.find(function(item) { return item.id === productId; });
@@ -107,6 +168,9 @@ function toggleMenu() {
     if (menu) menu.classList.toggle('active');
 }
 
+/* =========================
+   SEARCH PRODUCTS
+========================= */
 async function searchProducts() {
     const searchInput = document.getElementById('searchInput');
     if (!searchInput) return;
@@ -118,6 +182,8 @@ async function searchProducts() {
         return product.name.toLowerCase().includes(searchValue) ||
                product.category.toLowerCase().includes(searchValue);
     });
+
+    const allReviews = await fetchAllReviews();
 
     const productsGrid = document.getElementById('productsGrid');
     if (!productsGrid) return;
@@ -136,8 +202,15 @@ async function searchProducts() {
 
         const oldPriceHTML = product.oldPrice ? '<del>Rs. ' + product.oldPrice.toLocaleString() + '</del>' : '';
         const badgeHTML = product.badge ? '<span class="sale-badge">' + product.badge + '</span>' : '';
-        const rating = Math.min(product.rating || 5, 5);
-        const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+
+        const ratingData = calculateProductRating(product.id, allReviews);
+
+        let ratingHTML;
+        if (ratingData.count > 0) {
+            ratingHTML = '<div class="rating">' + ratingData.stars + ' <span>(' + ratingData.count + ')</span></div>';
+        } else {
+            ratingHTML = '<div class="rating" style="color:#cbd5e1;">☆☆☆☆☆ <span>(0)</span></div>';
+        }
 
         let imageHTML;
         if (product.image && product.image.indexOf('http') === 0) {
@@ -150,7 +223,7 @@ async function searchProducts() {
             '<div class="product-info">' +
                 '<p class="product-category">' + product.category + '</p>' +
                 '<h3>' + product.name + '</h3>' +
-                '<div class="rating">' + stars + ' <span>(' + (product.reviews || 0) + ')</span></div>' +
+                ratingHTML +
                 '<div class="price"><strong>Rs. ' + Number(product.price).toLocaleString() + '</strong>' + oldPriceHTML + '</div>' +
                 '<button class="add-cart-btn" data-product-id="' + product.id + '"><i class="fa-solid fa-cart-plus"></i> Add to Cart</button>' +
             '</div>';
@@ -184,6 +257,9 @@ function changeQuantity(change) {
     quantityElement.textContent = productQuantity;
 }
 
+/* =========================
+   LOAD PRODUCT DETAILS
+========================= */
 async function loadProductDetails() {
     const detailsContainer = document.getElementById('productDetails');
     if (!detailsContainer) return;
@@ -201,10 +277,20 @@ async function loadProductDetails() {
         return;
     }
 
+    // Fetch reviews for this product
+    const allReviews = await fetchAllReviews();
+    const ratingData = calculateProductRating(product.id, allReviews);
+
     const oldPriceHTML = product.oldPrice ? '<del>Rs. ' + product.oldPrice.toLocaleString() + '</del>' : '';
     const badgeHTML = product.badge ? '<span class="details-badge">' + product.badge + '</span>' : '';
-    const rating = Math.min(product.rating || 5, 5);
-    const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+
+    // Rating display
+    let ratingText;
+    if (ratingData.count > 0) {
+        ratingText = ratingData.avg + '.0 (' + ratingData.count + ' review' + (ratingData.count !== 1 ? 's' : '') + ')';
+    } else {
+        ratingText = 'No reviews yet';
+    }
 
     let imageHTML;
     if (product.image && product.image.indexOf('http') === 0) {
@@ -218,10 +304,10 @@ async function loadProductDetails() {
             '<p class="product-category">' + product.category + '</p>' +
             '<h1>' + product.name + '</h1>' +
             '<div class="details-rating" style="display:flex; align-items:center; gap:10px; margin:15px 0; flex-wrap:wrap;">' +
-    '<span style="color:#f59e0b; font-size:20px; letter-spacing:3px;">' + stars + '</span>' +
-    '<span style="color:#64748b; font-size:14px; font-weight:600;" id="productRatingText">Loading...</span>' +
-    '<a href="#productReviewsSection" style="color:#7c3aed; font-size:13px; font-weight:700; text-decoration:none; border-bottom:2px solid #7c3aed; padding-bottom:2px;">See Reviews ↓</a>' +
-'</div>' +
+                '<span style="color:#f59e0b; font-size:20px; letter-spacing:3px;">' + ratingData.stars + '</span>' +
+                '<span style="color:#64748b; font-size:14px; font-weight:600;">' + ratingText + '</span>' +
+                (ratingData.count > 0 ? '<a href="#productReviewsSection" style="color:#7c3aed; font-size:13px; font-weight:700; text-decoration:none; border-bottom:2px solid #7c3aed; padding-bottom:2px;">See Reviews ↓</a>' : '') +
+            '</div>' +
             '<div class="details-price"><strong>Rs. ' + Number(product.price).toLocaleString() + '</strong>' + oldPriceHTML + '</div>' +
             '<p class="details-description">' + (product.description || '') + '</p>' +
             '<div class="stock-status"><i class="fa-solid fa-circle-check"></i> ' +
@@ -245,6 +331,9 @@ async function loadProductDetails() {
         '</div>';
 }
 
+/* =========================
+   ADD PRODUCT TO CART (Details Page)
+========================= */
 async function addProductToCart(productId) {
     const allProducts = await fetchProductsFromServer();
     const product = allProducts.find(function(item) { return item.id === productId; });
@@ -281,6 +370,9 @@ function goToHomeSearch() {
     window.location.href = 'index.html?search=' + encodeURIComponent(searchValue);
 }
 
+/* =========================
+   START
+========================= */
 document.addEventListener('DOMContentLoaded', async function() {
     updateCartBadge();
     await displayProducts();
