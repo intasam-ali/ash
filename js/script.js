@@ -217,7 +217,11 @@ async function loadProductDetails() {
         '<div class="details-info">' +
             '<p class="product-category">' + product.category + '</p>' +
             '<h1>' + product.name + '</h1>' +
-            '<div class="details-rating"><span>' + stars + '</span><span>(' + (product.reviews || 0) + ' reviews)</span></div>' +
+            '<div class="details-rating" style="display:flex; align-items:center; gap:10px; margin:15px 0; flex-wrap:wrap;">' +
+    '<span style="color:#f59e0b; font-size:20px; letter-spacing:3px;">' + stars + '</span>' +
+    '<span style="color:#64748b; font-size:14px; font-weight:600;" id="productRatingText">Loading...</span>' +
+    '<a href="#productReviewsSection" style="color:#7c3aed; font-size:13px; font-weight:700; text-decoration:none; border-bottom:2px solid #7c3aed; padding-bottom:2px;">See Reviews ↓</a>' +
+'</div>' +
             '<div class="details-price"><strong>Rs. ' + Number(product.price).toLocaleString() + '</strong>' + oldPriceHTML + '</div>' +
             '<p class="details-description">' + (product.description || '') + '</p>' +
             '<div class="stock-status"><i class="fa-solid fa-circle-check"></i> ' +
