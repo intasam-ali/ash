@@ -294,10 +294,11 @@ async function placeOrder(event) {
     orders.unshift(order);
     localStorage.setItem('genzOrders', JSON.stringify(orders));
 
-    localStorage.removeItem('genzCart');
+       localStorage.removeItem('genzCart');
     updateCartBadge();
     showOrderSuccess(order);
-    sendWhatsAppOrder(order);
+    sendWhatsAppOrder(order);       // Admin ko bhejo
+    sendCustomerConfirmation(order); // Customer ko bhejo
 }
 
 function showOrderSuccess(order) {
@@ -309,47 +310,87 @@ function showOrderSuccess(order) {
         'cod': 'Cash on Delivery'
     }[order.payment] || order.payment;
 
+    const trackLink = 'https://intasam-ali.github.io/ash/track-order.html?order=' + order.orderNumber;
+
     container.innerHTML = `
         <div class="success-container">
             <div class="check-icon"><i class="fa-solid fa-check"></i></div>
             <h2>Order Placed Successfully! 🎉</h2>
             <p>Order #${order.orderNumber}</p>
-            <p class="order-number">Payment Method: <strong>${paymentLabel}</strong></p>
-            <p class="order-number">We will contact you shortly on <strong>${order.customer.phone}</strong></p>
+
+            <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:20px; margin:20px auto; max-width:450px;">
+                <p style="font-size:14px; color:#166534; margin-bottom:10px; font-weight:700;">
+                    ✅ Aapka order confirm ho gaya hai!
+                </p>
+                <p style="font-size:13px; color:#166534; margin-bottom:15px;">
+                    Order ki details aur tracking link aapke WhatsApp par bheji gayi hain.
+                </p>
+                <a href="${trackLink}" target="_blank" style="display:inline-block; background:#7c3aed; color:white; text-decoration:none; padding:10px 20px; border-radius:8px; font-weight:700; font-size:14px;">
+                    <i class="fa-solid fa-truck-fast"></i> Track Your Order
+                </a>
+            </div>
 
             ${order.payment === 'easypaisa' ? `
-                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:15px; margin:20px auto; max-width:400px; text-align:left;">
-                    <h4 style="color:#166534; margin-bottom:8px;">💳 Payment Instructions:</h4>
-                    <p style="font-size:14px; color:#166534; margin:5px 0;">Send Rs. ${order.total.toLocaleString()} to:</p>
-                    <p style="font-size:16px; color:#111827; font-weight:700; margin:5px 0;">Easypaisa: 0319-7745919</p>
-                    <p style="font-size:14px; color:#166534; margin:5px 0;">Account Name: Intisam Ali</p>
-                    <p style="font-size:13px; color:#166534; margin-top:10px;">📸 Screenshot WhatsApp par bhejein: <strong>0319-7745919</strong></p>
+                <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:12px; padding:20px; margin:20px auto; max-width:450px; text-align:left;">
+                    <h4 style="color:#c2410c; margin-bottom:10px; font-size:15px;">
+                        💳 Payment Instructions
+                    </h4>
+                    <p style="font-size:14px; color:#9a3412; margin:5px 0;">
+                        Send Rs. <strong>${order.total.toLocaleString()}</strong> to:
+                    </p>
+                    <p style="font-size:16px; color:#111827; font-weight:800; margin:8px 0; padding:10px; background:white; border-radius:8px;">
+                        📱 Easypaisa: 0319-7745919
+                    </p>
+                    <p style="font-size:14px; color:#9a3412; margin:5px 0;">
+                        Account Name: <strong>Intisam Ali</strong>
+                    </p>
+                    <p style="font-size:13px; color:#9a3412; margin-top:12px;">
+                        📸 Payment screenshot WhatsApp par bhejein:
+                        <a href="https://wa.me/923197745919" target="_blank" style="color:#7c3aed; font-weight:700; text-decoration:none;">
+                            0319-7745919
+                        </a>
+                    </p>
                 </div>
             ` : ''}
 
             ${order.payment === 'bank' ? `
-                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:15px; margin:20px auto; max-width:400px; text-align:left;">
-                    <h4 style="color:#166534; margin-bottom:8px;">🏦 Payment Instructions:</h4>
-                    <p style="font-size:14px; color:#166534; margin:5px 0;">Transfer Rs. ${order.total.toLocaleString()} to:</p>
-                    <p style="font-size:15px; color:#111827; font-weight:700; margin:5px 0;">UBL: 0620296738441</p>
-                    <p style="font-size:14px; color:#166534; margin:5px 0;">Account Name: Intisam Ali</p>
-                    <p style="font-size:13px; color:#166534; margin-top:10px;">📸 Screenshot WhatsApp par bhejein: <strong>0319-7745919</strong></p>
+                <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:12px; padding:20px; margin:20px auto; max-width:450px; text-align:left;">
+                    <h4 style="color:#c2410c; margin-bottom:10px; font-size:15px;">
+                        🏦 Bank Transfer Instructions
+                    </h4>
+                    <p style="font-size:14px; color:#9a3412; margin:5px 0;">
+                        Transfer Rs. <strong>${order.total.toLocaleString()}</strong> to:
+                    </p>
+                    <p style="font-size:15px; color:#111827; font-weight:800; margin:8px 0; padding:10px; background:white; border-radius:8px;">
+                        🏦 UBL: 0620296738441
+                    </p>
+                    <p style="font-size:14px; color:#9a3412; margin:5px 0;">
+                        Account Name: <strong>Intisam Ali</strong>
+                    </p>
+                    <p style="font-size:13px; color:#9a3412; margin-top:12px;">
+                        📸 Screenshot WhatsApp par bhejein:
+                        <a href="https://wa.me/923197745919" target="_blank" style="color:#7c3aed; font-weight:700; text-decoration:none;">
+                            0319-7745919
+                        </a>
+                    </p>
                 </div>
             ` : ''}
 
-            <div class="btn-group" style="margin-top:25px;">
+            <div style="margin-top:25px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
                 <a href="index.html" class="primary-btn">
                     <i class="fa-solid fa-store"></i> Continue Shopping
                 </a>
-                <a href="https://wa.me/923197745919?text=Assalam-o-Alaikum%20GEN.Z%20GADGETS%2C%20Mera%20order%20%23${order.orderNumber}%20place%20kia%20hai.%20Mera%20name%3A%20${order.customer.name}" 
+                <a href="${trackLink}" target="_blank" class="primary-btn" style="background:#7c3aed;">
+                    <i class="fa-solid fa-truck-fast"></i> Track Order
+                </a>
+                <a href="https://wa.me/923197745919?text=Assalam-o-Alaikum%2C%20Mera%20order%20%23${order.orderNumber}%20hai.%20Please%20confirm." 
                    target="_blank" class="primary-btn whatsapp-btn">
-                    <i class="fa-brands fa-whatsapp"></i> Confirm on WhatsApp
+                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
                 </a>
             </div>
         </div>
     `;
 }
-
 /* ============================================
    SEND ORDER TO ADMIN (WhatsApp)
    ============================================ */
