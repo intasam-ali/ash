@@ -52,6 +52,15 @@ async function loadProductReviews() {
             // Update summary
             const bigRating = document.getElementById('productBigRating');
             const starsEl = document.getElementById('productStars');
+           // Update product page rating text
+const ratingText = document.getElementById('productRatingText');
+if (ratingText) {
+    if (productReviews.length > 0) {
+        ratingText.textContent = avgRating + ' (' + productReviews.length + ' review' + (productReviews.length !== 1 ? 's' : '') + ')';
+    } else {
+        ratingText.textContent = 'No reviews yet';
+    }
+}
             const countEl = document.getElementById('productReviewCount');
             const writeBtn = document.getElementById('writeReviewLink');
 
