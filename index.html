@@ -201,11 +201,17 @@
             </a>
 
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search mobile accessories...">
-                <button onclick="searchProducts()">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
-            </div>
+    <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Search mobile accessories..." 
+        oninput="liveSearch(this.value)"
+        autocomplete="off"
+    >
+    <button onclick="searchProducts()">
+        <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
+</div>
 
             <div class="nav-icons">
                 <a href="track-order.html" title="Track Order" style="display:flex; align-items:center; gap:5px; text-decoration:none; color:#7c3aed; font-weight:600; font-size:13px;">
