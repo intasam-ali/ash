@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write a Review | GEN.Z GADGETS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; padding-bottom: 50px; }
+        .header { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 15px 20px; }
+        .header-inner { max-width: 600px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 20px; font-weight: 900; text-decoration: none; color: #111827; }
+        .logo span { color: #7c3aed; }
+        .container { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+        .review-card {
+            background: #fff; border-radius: 16px; padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;
+        }
+        .review-card h1 {
+            font-size: 24px; color: #111827; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .review-card h1 i { color: #f59e0b; }
+        .review-card > p { color: #64748b; margin-bottom: 25px; font-size: 14px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block; font-weight: 700; font-size: 14px;
+            margin-bottom: 8px; color: #1e293b;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%; padding: 12px 15px; border: 1px solid #d1d5db;
+            border-radius: 10px; font-size: 15px; background: #f8fafc;
+            font-family: inherit;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none; border-color: #7c3aed; background: #fff;
+        }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+        .star-rating {
+            display: flex; gap: 8px; font-size: 32px; margin: 5px 0;
+        }
+        .star-rating i {
+            cursor: pointer; color: #d1d5db; transition: 0.2s;
+        }
+        .star-rating i:hover,
+        .star-rating i.active { color: #f59e0b; transform: scale(1.1); }
+        .submit-btn {
+            width: 100%; padding: 15px; background: linear-gradient(135deg, #7c3aed, #06b6d4);
+            color: white; border: none; border-radius: 12px;
+            font-size: 16px; font-weight: 700; cursor: pointer;
+            transition: 0.3s; display: flex; align-items: center;
+            justify-content: center; gap: 8px;
+        }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(124,58,237,0.35); }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .success-box {
+            text-align: center; padding: 50px 20px;
+        }
+        .success-box i {
+            font-size: 70px; color: #22c55e; margin-bottom: 20px;
+        }
+        .success-box h2 { color: #16a34a; margin-bottom: 10px; }
+        .success-box p { color: #64748b; margin-bottom: 25px; }
+        .success-box a {
+            display: inline-block; background: #7c3aed; color: white;
+            text-decoration: none; padding: 12px 25px; border-radius: 10px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">GEN.Z <span>GADGETS</span></a>
+            <a href="index.html" style="color:#7c3aed; text-decoration:none; font-weight:600; font-size:14px;">
+                <i class="fa-solid fa-store"></i> Store
+            </a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="review-card" id="reviewCard">
+            <h1><i class="fa-solid fa-star"></i> Write a Review</h1>
+            <p>Aapki raye humare liye bohat ahem hai. Apna tajurba share karein!</p>
+
+            <form id="reviewForm">
+                <div class="form-group">
+                    <label>Your Name *</label>
+                    <input type="text" id="reviewName" placeholder="e.g. Ahmed Khan" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Product (Optional)</label>
+                    <select id="reviewProduct">
+                        <option value="">-- Select Product --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Your Rating *</label>
+                    <div class="star-rating" id="starRating">
+                        <i class="fa-solid fa-star" data-rating="1"></i>
+                        <i class="fa-solid fa-star" data-rating="2"></i>
+                        <i class="fa-solid fa-star" data-rating="3"></i>
+                        <i class="fa-solid fa-star" data-rating="4"></i>
+                        <i class="fa-solid fa-star" data-rating="5"></i>
+                    </div>
+                    <input type="hidden" id="reviewRating" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Your Review *</label>
+                    <textarea id="reviewText" placeholder="Product kaisa laga? Quality, delivery, service ke baare mein batayein..." required></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <i class="fa-solid fa-paper-plane"></i> Submit Review
+                </button>
+            </form>
+        </div>
+
+        <div class="success-box" id="successBox" style="display:none;">
+            <i class="fa-solid fa-check-circle"></i>
+            <h2>Shukriya!</h2>
+            <p>Aapka review submit ho gaya hai. Yeh jald hi website par show hoga.</p>
+            <a href="index.html">
+                <i class="fa-solid fa-store"></i> Back to Store
+            </a>
+        </div>
+    </div>
+
+    <script type="module" src="js/firebase.js"></script>
+    <script>
+        let selectedRating = 0;
+
+        // Star rating click
+        document.querySelectorAll('.star-rating i').forEach(function(star) {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.dataset.rating);
+                document.getElementById('reviewRating').value = selectedRating;
+                updateStars();
+            });
+            star.addEventListener('mouseenter', function() {
+                const hover = parseInt(this.dataset.rating);
+                document.querySelectorAll('.star-rating i').forEach(function(s, i) {
+                    s.style.color = i < hover ? '#f59e0b' : '#d1d5db';
+                });
+            });
+        });
+
+        document.getElementById('starRating').addEventListener('mouseleave', function() {
+            updateStars();
+        });
+
+        function updateStars() {
+            document.querySelectorAll('.star-rating i').forEach(function(s, i) {
+                s.style.color = i < selectedRating ? '#f59e0b' : '#d1d5db';
+            });
+        }
+
+        // Load products for dropdown
+        function waitForFirebase(callback) {
+            if (window.firebaseDB) callback();
+            else setTimeout(function() { waitForFirebase(callback); }, 100);
+        }
+
+        async function loadProducts() {
+            return new Promise(function(resolve) {
+                waitForFirebase(async function() {
+                    try {
+                        const { db, collection, getDocs } = window.firebaseDB;
+                        const snapshot = await getDocs(collection(db, 'products'));
+                        const products = [];
+                        snapshot.forEach(function(doc) {
+                            const p = doc.data();
+                            if (p.active !== false) products.push(p);
+                        });
+                        resolve(products);
+                    } catch (e) {
+                        resolve([]);
+                    }
+                });
+            });
+        }
+
+        async function saveReviewToFirebase(review) {
+            return new Promise(function(resolve) {
+                waitForFirebase(async function() {
+                    try {
+                        const { db, doc, setDoc } = window.firebaseDB;
+                        await setDoc(doc(db, 'reviews', String(review.id)), review);
+                        resolve(true);
+                    } catch (error) {
+                        console.error('Review save error:', error);
+                        resolve(false);
+                    }
+                });
+            });
+        }
+
+        // Form submit
+        document.getElementById('reviewForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('reviewName').value.trim();
+            const productId = document.getElementById('reviewProduct').value;
+            const productName = productId ? document.getElementById('reviewProduct').selectedOptions[0].text : 'Store';
+            const rating = parseInt(document.getElementById('reviewRating').value);
+            const text = document.getElementById('reviewText').value.trim();
+
+            if (!name) { alert('Please enter your name'); return; }
+            if (rating === 0) { alert('Please select a rating'); return; }
+            if (!text) { alert('Please write your review'); return; }
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
+
+            const review = {
+                id: Date.now(),
+                name: name,
+                productId: productId || null,
+                productName: productName,
+                rating: rating,
+                text: text,
+                date: new Date().toISOString(),
+                approved: true
+            };
+
+            const saved = await saveReviewToFirebase(review);
+
+            if (saved) {
+                document.getElementById('reviewCard').style.display = 'none';
+                document.getElementById('successBox').style.display = 'block';
+            } else {
+                alert('❌ Review save nahi hua. Dobara koshish karein.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Review';
+            }
+        });
+
+        // Init
+        document.addEventListener('DOMContentLoaded', async function() {
+            const products = await loadProducts();
+            const select = document.getElementById('reviewProduct');
+            products.forEach(function(p) {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.textContent = p.name;
+                select.appendChild(opt);
+            });
+        });
+    </script>
+</body>
+</html>
