@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Reviews | GEN.Z GADGETS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; padding-bottom: 50px; }
+        .header { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 15px 20px; position: sticky; top: 0; z-index: 100; }
+        .header-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .logo { font-size: 20px; font-weight: 900; text-decoration: none; color: #111827; }
+        .logo span { color: #7c3aed; }
+        .nav-links { display: flex; gap: 12px; align-items: center; }
+        .nav-links a { color: #64748b; text-decoration: none; font-weight: 600; padding: 8px 15px; border-radius: 8px; font-size: 14px; }
+        .nav-links a:hover { background: #f1f5f9; color: #111827; }
+        .nav-links a.active { background: #ede9fe; color: #7c3aed; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 25px 20px; }
+        .page-title { font-size: 26px; color: #111827; margin-bottom: 5px; }
+        .page-subtitle { color: #64748b; margin-bottom: 25px; }
+        .refresh-btn { background: #7c3aed; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+        .refresh-btn:hover { background: #6d28d9; }
+        .reviews-grid-admin { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
+        .admin-review-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .arc-top { display: flex; align-items: center; gap: 12px; }
+        .arc-avatar {
+            width: 45px; height: 45px; border-radius: 50%;
+            background: linear-gradient(135deg, #7c3aed, #06b6d4);
+            color: white; display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 16px; flex-shrink: 0;
+        }
+        .arc-info { flex: 1; }
+        .arc-info strong { display: block; color: #111827; font-size: 15px; }
+        .arc-info small { color: #94a3b8; font-size: 12px; }
+        .arc-stars { color: #f59e0b; font-size: 14px; letter-spacing: 2px; }
+        .arc-text { color: #475569; font-size: 14px; line-height: 1.6; flex: 1; }
+        .arc-product {
+            background: #ede9fe; color: #7c3aed;
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 11px; font-weight: 700; align-self: flex-start;
+        }
+        .arc-delete-btn {
+            background: #fee2e2; color: #dc2626;
+            border: none; padding: 10px 15px;
+            border-radius: 8px; font-weight: 600;
+            cursor: pointer; font-size: 13px;
+            display: flex; align-items: center;
+            justify-content: center; gap: 6px;
+            transition: 0.3s;
+        }
+        .arc-delete-btn:hover { background: #dc2626; color: white; }
+        .empty-reviews { text-align: center; padding: 60px 20px; background: #fff; border-radius: 14px; }
+        .empty-reviews i { font-size: 50px; color: #cbd5e1; margin-bottom: 15px; display: block; }
+        .empty-reviews h3 { color: #1e293b; margin-bottom: 8px; }
+        .empty-reviews p { color: #94a3b8; }
+        @media (max-width: 600px) {
+            .reviews-grid-admin { grid-template-columns: 1fr; }
+            .nav-links a { padding: 6px 10px; font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-inner">
+            <a href="admin-mobile.html" class="logo">GEN.Z <span>GADGETS</span></a>
+            <div class="nav-links">
+                <a href="admin-mobile.html"><i class="fa-solid fa-box"></i> Products</a>
+                <a href="admin-orders.html"><i class="fa-solid fa-receipt"></i> Orders</a>
+                <a href="admin-reviews.html" class="active"><i class="fa-solid fa-star"></i> Reviews</a>
+                <a href="index.html"><i class="fa-solid fa-store"></i> Store</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="page-title">⭐ Reviews Management</h1>
+        <p class="page-subtitle">View and manage all customer reviews</p>
+
+        <button class="refresh-btn" onclick="loadReviews()">
+            <i class="fa-solid fa-rotate"></i> Refresh
+        </button>
+
+        <div id="reviewsContainer">
+            <div class="empty-reviews">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <p>Loading reviews...</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/firebase.js"></script>
+    <script>
+        let allReviews = [];
+
+        function waitForFirebase(callback) {
+            if (window.firebaseDB) callback();
+            else setTimeout(function() { waitForFirebase(callback); }, 100);
+        }
+
+        async function fetchReviewsFromFirebase() {
+            return new Promise(function(resolve) {
+                waitForFirebase(async function() {
+                    try {
+                        const { db, collection, getDocs } = window.firebaseDB;
+                        const snapshot = await getDocs(collection(db, 'reviews'));
+                        const reviews = [];
+                        snapshot.forEach(function(doc) {
+                            reviews.push(doc.data());
+                        });
+                        reviews.sort(function(a, b) {
+                            return new Date(b.date) - new Date(a.date);
+                        });
+                        resolve(reviews);
+                    } catch (error) {
+                        console.error('Fetch error:', error);
+                        resolve([]);
+                    }
+                });
+            });
+        }
+
+        async function deleteReviewFromFirebase(reviewId) {
+            return new Promise(function(resolve) {
+                waitForFirebase(async function() {
+                    try {
+                        const { db, doc, deleteDoc } = window.firebaseDB;
+                        await deleteDoc(doc(db, 'reviews', String(reviewId)));
+                        resolve(true);
+                    } catch (error) {
+                        console.error('Delete error:', error);
+                        resolve(false);
+                    }
+                });
+            });
+        }
+
+        async function loadReviews() {
+            const container = document.getElementById('reviewsContainer');
+            container.innerHTML = '<div class="empty-reviews"><i class="fa-solid fa-spinner fa-spin"></i><p>Loading...</p></div>';
+
+            allReviews = await fetchReviewsFromFirebase();
+            renderReviews();
+        }
+
+        function renderReviews() {
+            const container = document.getElementById('reviewsContainer');
+
+            if (allReviews.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-reviews">
+                        <i class="fa-solid fa-star"></i>
+                        <h3>No Reviews Yet</h3>
+                        <p>When customers submit reviews, they will appear here.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const grid = document.createElement('div');
+            grid.className = 'reviews-grid-admin';
+
+            grid.innerHTML = allReviews.map(function(r) {
+                const initials = r.name.split(' ').map(function(n) { return n[0]; }).join('').toUpperCase().slice(0, 2);
+                const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+                const dateStr = new Date(r.date).toLocaleDateString('en-PK', {
+                    day: 'numeric', month: 'short', year: 'numeric'
+                });
+
+                return `
+                    <div class="admin-review-card">
+                        <div class="arc-top">
+                            <div class="arc-avatar">${initials}</div>
+                            <div class="arc-info">
+                                <strong>${r.name}</strong>
+                                <small>${dateStr}</small>
+                            </div>
+                        </div>
+                        <div class="arc-stars">${stars}</div>
+                        <div class="arc-text">${r.text}</div>
+                        ${r.productName && r.productName !== 'Store' ? '<div class="arc-product">📦 ' + r.productName + '</div>' : '<div class="arc-product">🏪 Store Review</div>'}
+                        <button class="arc-delete-btn" onclick="deleteReview(${r.id})">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = '';
+            container.appendChild(grid);
+        }
+
+        async function deleteReview(reviewId) {
+            const review = allReviews.find(function(r) { return r.id === reviewId; });
+            if (!review) return;
+
+            if (!confirm('Delete review by "' + review.name + '"?')) return;
+
+            const ok = await deleteReviewFromFirebase(reviewId);
+            if (ok) {
+                allReviews = allReviews.filter(function(r) { return r.id !== reviewId; });
+                renderReviews();
+                alert('🗑️ Review deleted');
+            } else {
+                alert('❌ Delete failed');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(loadReviews, 500);
+        });
+    </script>
+</body>
+</html>
