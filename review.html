@@ -246,16 +246,23 @@
         });
 
         // Init
-        document.addEventListener('DOMContentLoaded', async function() {
-            const products = await loadProducts();
-            const select = document.getElementById('reviewProduct');
-            products.forEach(function(p) {
-                const opt = document.createElement('option');
-                opt.value = p.id;
-                opt.textContent = p.name;
-                select.appendChild(opt);
-            });
-        });
+document.addEventListener('DOMContentLoaded', async function() {
+    const products = await loadProducts();
+    const select = document.getElementById('reviewProduct');
+    products.forEach(function(p) {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = p.name;
+        select.appendChild(opt);
+    });
+
+    // Pre-select product if passed in URL
+    const params = new URLSearchParams(window.location.search);
+    const preProduct = params.get('product');
+    if (preProduct) {
+        select.value = preProduct;
+    }
+});
     </script>
 </body>
 </html>
