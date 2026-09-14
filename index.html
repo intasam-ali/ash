@@ -228,8 +228,8 @@
             <a href="#">Home</a>
             <a href="#categories">Categories</a>
             <a href="#products">Products</a>
-            <a href="track-order.html">Track Order</a>
             <a href="#reviews">Reviews</a>
+            <a href="track-order.html">Track Order</a>
             <a href="#about">About</a>
             <a href="#contact">Contact</a>
         </nav>
@@ -295,6 +295,23 @@
     </section>
 
 
+    <!-- ================= PRODUCTS ================= -->
+    <section class="products-section" id="products">
+        <div class="container">
+            <div class="section-heading">
+                <div>
+                    <p>OUR STORE</p>
+                    <h2>Featured Products</h2>
+                </div>
+                <a href="#">
+                    View All <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="products-grid" id="productsGrid"></div>
+        </div>
+    </section>
+
+
     <!-- ================= STORE RATING ================= -->
     <section class="store-rating-section" id="reviews">
         <div class="container">
@@ -317,23 +334,6 @@
                     <i class="fa-solid fa-spinner fa-spin"></i> Loading reviews...
                 </div>
             </div>
-        </div>
-    </section>
-
-
-    <!-- ================= PRODUCTS ================= -->
-    <section class="products-section" id="products">
-        <div class="container">
-            <div class="section-heading">
-                <div>
-                    <p>OUR STORE</p>
-                    <h2>Featured Products</h2>
-                </div>
-                <a href="#">
-                    View All <i class="fa-solid fa-arrow-right"></i>
-                </a>
-            </div>
-            <div class="products-grid" id="productsGrid"></div>
         </div>
     </section>
 
@@ -381,6 +381,7 @@
                 <h3>Quick Links</h3>
                 <a href="#">Home</a>
                 <a href="#products">Products</a>
+                <a href="#reviews">Reviews</a>
                 <a href="track-order.html">Track Order</a>
                 <a href="#about">About</a>
                 <a href="#contact">Contact</a>
@@ -416,7 +417,7 @@
     <script src="js/script.js"></script>
 
     <script>
-        // Reviews loading (non-module)
+        // Reviews loading
         function waitForFirebase(callback) {
             if (window.firebaseDB) callback();
             else setTimeout(function() { waitForFirebase(callback); }, 100);
