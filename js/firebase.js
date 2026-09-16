@@ -14,8 +14,13 @@ import {
     deleteDoc,
     updateDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import {
+    getAuth,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    signOut
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// ===== FIREBASE CONFIG =====
 const firebaseConfig = {
     apiKey: "AIzaSyDZRn0KADLkLTexwzOpnqR-VKzRqQKPUGY",
     authDomain: "genz-gadgets.firebaseapp.com",
@@ -25,20 +30,25 @@ const firebaseConfig = {
     appId: "1:473246555348:web:9944b3fc49a8a57e966f41"
 };
 
-// ===== INITIALIZE =====
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
-// ===== MAKE GLOBAL (for non-module scripts) =====
+// Make global for non-module scripts
 window.firebaseDB = {
     db,
+    auth,
     collection,
     doc,
     getDoc,
     getDocs,
     setDoc,
     deleteDoc,
-    updateDoc
+    updateDoc,
+    getAuth,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    signOut
 };
 
-console.log('✅ FIREBASE INITIALIZED');
+console.log('✅ FIREBASE INITIALIZED with Auth');
