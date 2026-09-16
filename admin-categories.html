@@ -8,25 +8,35 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; background: #f5f7fa; padding-bottom: 80px; }
-
         .mobile-header {
             background: #111827; color: white; padding: 15px 20px;
             position: sticky; top: 0; z-index: 100;
             display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 10px;
         }
         .mobile-header .logo { font-size: 20px; font-weight: 900; }
         .mobile-header .logo span { color: #7c3aed; }
-        .mobile-header a { color: #94a3b8; text-decoration: none; font-size: 13px; }
-
+        .mobile-header .nav-links {
+            display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+        }
+        .mobile-header .nav-links a {
+            color: #94a3b8; text-decoration: none; font-size: 13px;
+            padding: 5px 10px; border-radius: 6px;
+            transition: 0.2s;
+        }
+        .mobile-header .nav-links a:hover {
+            background: #1e293b; color: white;
+        }
+        .mobile-header .nav-links a.logout {
+            color: #f87171;
+        }
         .mobile-container { padding: 15px; max-width: 500px; margin: 0 auto; }
-
         .page-title {
             font-size: 22px; color: #111827; margin-bottom: 5px;
             display: flex; align-items: center; gap: 10px;
         }
         .page-title i { color: #7c3aed; }
         .page-subtitle { color: #64748b; font-size: 13px; margin-bottom: 20px; }
-
         .stats-grid {
             display: grid; grid-template-columns: 1fr 1fr;
             gap: 10px; margin-bottom: 20px;
@@ -39,7 +49,6 @@
             font-size: 24px; font-weight: 900; color: #7c3aed; display: block;
         }
         .stat-box .label { font-size: 11px; color: #94a3b8; }
-
         .category-item {
             background: white; border-radius: 12px; padding: 15px;
             margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
@@ -55,7 +64,6 @@
         .cat-info { flex: 1; min-width: 0; }
         .cat-info h4 { font-size: 15px; margin-bottom: 3px; color: #111827; }
         .cat-info p { font-size: 12px; color: #64748b; }
-
         .cat-actions { display: flex; gap: 6px; flex-shrink: 0; }
         .cat-actions button {
             width: 36px; height: 36px; border: none; border-radius: 8px;
@@ -65,7 +73,6 @@
         .cat-actions .edit { background: #ede9fe; color: #7c3aed; }
         .cat-actions .delete { background: #fee2e2; color: #dc2626; }
         .cat-actions .up, .cat-actions .down { background: #dbeafe; color: #2563eb; }
-
         .mobile-fab {
             position: fixed; bottom: 20px; right: 20px;
             width: 60px; height: 60px; background: #7c3aed; color: white;
@@ -74,7 +81,6 @@
             cursor: pointer; z-index: 99;
         }
         .mobile-fab:active { transform: scale(0.95); }
-
         .mobile-form {
             background: white; border-radius: 16px; padding: 20px;
             margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
@@ -103,14 +109,12 @@
         }
         .mobile-form .form-actions .save { background: #7c3aed; color: white; }
         .mobile-form .form-actions .cancel { background: #f1f5f9; color: #64748b; }
-
         .icon-preview {
             width: 60px; height: 60px; border-radius: 12px;
             background: #ede9fe; color: #7c3aed;
             display: flex; align-items: center; justify-content: center;
             font-size: 26px; margin: 10px 0;
         }
-
         .mobile-empty {
             text-align: center; padding: 50px 20px;
             background: white; border-radius: 14px;
@@ -119,7 +123,6 @@
             font-size: 50px; color: #cbd5e1; margin-bottom: 15px; display: block;
         }
         .mobile-empty p { color: #94a3b8; }
-
         .toast {
             position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
             background: #111827; color: white; padding: 12px 24px;
@@ -128,7 +131,6 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
         .toast.show { display: block; }
-
         .loading-box {
             text-align: center; padding: 50px; color: #94a3b8;
         }
@@ -138,11 +140,12 @@
 
     <div class="mobile-header">
         <div class="logo">GEN.Z <span>GADGETS</span></div>
-        <div style="display:flex; gap:12px; align-items:center;">
+        <div class="nav-links">
             <a href="admin-mobile.html"><i class="fa-solid fa-box"></i> Products</a>
             <a href="admin-orders.html"><i class="fa-solid fa-receipt"></i> Orders</a>
             <a href="admin-reviews.html"><i class="fa-solid fa-star"></i> Reviews</a>
             <a href="index.html"><i class="fa-solid fa-store"></i></a>
+            <a href="#" onclick="logoutAdmin()" class="logout"><i class="fa-solid fa-sign-out-alt"></i></a>
         </div>
     </div>
 
@@ -191,7 +194,7 @@
                     <option value="fa-gamepad">🎮 Game Controller</option>
                     <option value="fa-tv">📺 TV / Screen</option>
                     <option value="fa-microphone">🎤 Microphone</option>
-                    <option value="fa-speaker">🔊 Speaker</option>
+                    <option value="fa-volume-high">🔊 Speaker</option>
                     <option value="fa-shield-halved">🛡️ Protection</option>
                     <option value="fa-box">📦 Box / General</option>
                 </select>
@@ -219,6 +222,30 @@
     </button>
 
     <div class="toast" id="toast"></div>
+
+    <!-- ===== AUTH CHECK ===== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZRn0KADLkLTexwzOpnqR-VKzRqQKPUGY",
+            authDomain: "genz-gadgets.firebaseapp.com",
+            projectId: "genz-gadgets",
+            storageBucket: "genz-gadgets.firebasestorage.app",
+            messagingSenderId: "473246555348",
+            appId: "1:473246555348:web:9944b3fc49a8a57e966f41"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        onAuthStateChanged(auth, function(user) {
+            if (!user) {
+                window.location.href = 'admin-login.html';
+            }
+        });
+    </script>
 
     <script type="module" src="js/firebase.js"></script>
     <script>
@@ -462,8 +489,18 @@
             setTimeout(function() { toast.classList.remove('show'); }, 3000);
         }
 
+        function logoutAdmin() {
+            if (!confirm('Logout karna chahte hain?')) return;
+            import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js').then(function(module) {
+                const auth = module.getAuth();
+                module.signOut(auth).then(function() {
+                    window.location.href = 'admin-login.html';
+                });
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(loadCategories, 500);
+            setTimeout(loadCategories, 800);
         });
     </script>
 </body>
