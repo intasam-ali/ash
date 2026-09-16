@@ -101,8 +101,11 @@
         .nav-icons a { color: white !important; }
         .nav-icons a:hover { color: #a78bfa !important; }
 
-        /* ===== HERO ===== */
-        .hero { background: transparent !important; }
+        /* ===== HERO SECTION ===== */
+        .hero { 
+            background: transparent !important;
+            padding: 60px 0 80px;
+        }
         .hero::before {
             content: '';
             position: absolute;
@@ -110,17 +113,82 @@
             background: radial-gradient(circle at 70% 50%, rgba(124, 58, 237, 0.12), transparent 60%);
             pointer-events: none;
         }
-        .hero h1 { color: white !important; }
+
+        /* Owner Badge - Top */
+        .owner-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(6, 182, 212, 0.2));
+            border: 1.5px solid rgba(124, 58, 237, 0.5);
+            padding: 10px 22px;
+            border-radius: 30px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            color: #e9d5ff;
+            font-weight: 700;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.2);
+        }
+        .owner-hero-badge i {
+            color: #fbbf24;
+            font-size: 16px;
+        }
+        .owner-hero-badge strong {
+            color: white;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+        }
+
+        .hero h1 { 
+            color: white !important;
+            font-size: clamp(32px, 5.5vw, 58px);
+            line-height: 1.1;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
         .hero h1 span {
             background: linear-gradient(135deg, #a78bfa, #06b6d4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .hero-text > p:not(.small-title) { color: #b0b0b0 !important; }
-        .hero-circle {
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.3), rgba(6, 182, 212, 0.3)) !important;
-            box-shadow: 0 25px 80px rgba(124, 58, 237, 0.2) !important;
+        .hero-text > p:not(.small-title) { 
+            color: #b0b0b0 !important;
+            font-size: 17px;
+            margin-bottom: 30px;
+        }
+
+        /* Hero Image Circle - Store Picture */
+        .hero-store-image {
+            width: 100%;
+            max-width: 420px;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 
+                0 0 0 8px rgba(124, 58, 237, 0.15),
+                0 0 0 16px rgba(6, 182, 212, 0.08),
+                0 25px 80px rgba(124, 58, 237, 0.4);
+            animation: floatImage 4s ease-in-out infinite;
+        }
+        .hero-store-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        @keyframes floatImage {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .hero-image { 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
         /* ===== SECTIONS ===== */
@@ -177,7 +245,6 @@
         /* ===== STORE RATING SECTION ===== */
         .store-rating-section { padding: 70px 0; }
 
-        /* Rating Header */
         .rating-header {
             display: grid;
             grid-template-columns: 280px 1fr;
@@ -244,7 +311,6 @@
             box-shadow: 0 8px 25px rgba(124, 58, 237, 0.35);
         }
 
-        /* Reviews Grid */
         .reviews-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -258,8 +324,6 @@
             color: var(--text-muted);
             font-size: 15px;
         }
-
-        /* Review Card */
         .review-card {
             background: var(--card-bg) !important;
             border: 1px solid var(--border-dark) !important;
@@ -293,7 +357,6 @@
             font-weight: 800;
             font-size: 18px;
             flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
         }
         .review-name { flex: 1; min-width: 0; }
         .review-name strong {
@@ -301,19 +364,9 @@
             color: white !important;
             font-size: 15px;
             margin-bottom: 3px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
-        .review-name small {
-            color: #8a8a8a !important;
-            font-size: 12px;
-        }
-        .review-stars {
-            color: #f59e0b !important;
-            font-size: 16px;
-            letter-spacing: 2px;
-        }
+        .review-name small { color: #8a8a8a !important; font-size: 12px; }
+        .review-stars { color: #f59e0b !important; font-size: 16px; letter-spacing: 2px; }
         .review-text {
             color: #d4d4d4 !important;
             font-size: 14px;
@@ -330,8 +383,6 @@
             align-self: flex-start;
             border: 1px solid rgba(124, 58, 237, 0.3);
         }
-
-        /* See More Button */
         .see-more-btn {
             display: inline-flex;
             align-items: center;
@@ -406,7 +457,7 @@
         .copyright p { color: #737373 !important; font-size: 13px; }
         .copyright strong { color: #a78bfa; }
 
-        /* ===== SEARCH AUTOCOMPLETE ===== */
+        /* ===== AUTOCOMPLETE ===== */
         .autocomplete-item {
             padding: 12px 15px;
             cursor: pointer;
@@ -414,7 +465,6 @@
             align-items: center;
             gap: 10px;
             border-bottom: 1px solid #2a2a2a;
-            transition: 0.2s;
         }
         .autocomplete-item:last-child { border-bottom: none; }
         .autocomplete-item:hover { background: #2a2a2a; }
@@ -456,9 +506,18 @@
             background: linear-gradient(135deg, #7c3aed, #06b6d4) !important;
             color: white !important;
             box-shadow: 0 4px 20px rgba(124, 58, 237, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 30px;
+            border-radius: 10px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.3s;
         }
         .primary-btn:hover {
             box-shadow: 0 8px 30px rgba(124, 58, 237, 0.4);
+            transform: translateY(-2px);
         }
 
         /* ===== WHATSAPP ===== */
@@ -486,6 +545,7 @@
             .rating-big { font-size: 60px; }
             .review-card { padding: 18px; }
             .review-avatar { width: 42px; height: 42px; font-size: 16px; }
+            .hero-store-image { max-width: 320px; }
         }
 
         @media (max-width: 768px) {
@@ -493,6 +553,18 @@
             .logo-text .gadgets { font-size: 9px; letter-spacing: 3px; }
             .logo-icon { width: 38px; height: 38px; }
             .logo-icon svg { width: 22px; height: 22px; }
+            .owner-hero-badge { 
+                font-size: 12px; 
+                padding: 8px 16px;
+                margin-bottom: 20px;
+            }
+            .owner-hero-badge strong { font-size: 13px; }
+            .hero h1 { font-size: 28px; }
+            .hero-store-image { max-width: 260px; }
+            .hero-content {
+                flex-direction: column-reverse;
+                text-align: center;
+            }
         }
 
         @media (max-width: 600px) {
@@ -569,16 +641,27 @@
     <section class="hero">
         <div class="container hero-content">
             <div class="hero-text">
-                <p class="small-title">YOUR TECH. YOUR STYLE.</p>
-                <h1>Upgrade Your <span>Gadget Game.</span></h1>
+                
+                <!-- 👑 Owner Badge - Top -->
+                <div class="owner-hero-badge">
+                    <i class="fa-solid fa-crown"></i>
+                    <span>Founded by <strong>INTASAM ALI</strong></span>
+                </div>
+
+                <!-- Headline -->
+                <h1>Upgrade Your <span>Gadgets And Devices</span> With Us.</h1>
+
                 <p>Discover quality mobile accessories at affordable prices.</p>
+
                 <a href="#products" class="primary-btn">
                     Shop Now <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </div>
+            
             <div class="hero-image">
-                <div class="hero-circle">
-                    <i class="fa-solid fa-mobile-screen-button"></i>
+                <!-- 🖼️ Store Picture in Circle -->
+                <div class="hero-store-image">
+                    <img src="https://i.ibb.co/G4jLkC9B/intasam.jpg" alt="GEN.Z GADGETS Store">
                 </div>
             </div>
         </div>
@@ -743,13 +826,11 @@
 
 
     <!-- ================= SCRIPTS ================= -->
-
-    <!-- Firebase + Products + Main Script -->
     <script type="module" src="js/firebase.js"></script>
     <script src="js/products.js"></script>
     <script src="js/script.js"></script>
 
-    <!-- Reviews Loader (Direct Firebase) -->
+    <!-- Reviews Loader -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -772,16 +853,10 @@
 
         async function loadReviews() {
             try {
-                console.log('📥 Loading reviews...');
                 const snapshot = await getDocs(collection(db, 'reviews'));
                 allReviewsData = [];
-                snapshot.forEach(function(doc) { 
-                    allReviewsData.push(doc.data()); 
-                });
-                allReviewsData.sort(function(a, b) { 
-                    return new Date(b.date) - new Date(a.date); 
-                });
-                console.log('✅ Reviews loaded:', allReviewsData.length);
+                snapshot.forEach(function(doc) { allReviewsData.push(doc.data()); });
+                allReviewsData.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
 
                 let totalRating = 0;
                 allReviewsData.forEach(function(r) { totalRating += r.rating; });
@@ -802,20 +877,13 @@
 
                 renderReviewCards();
             } catch (error) {
-                console.error('❌ Reviews error:', error);
-                const grid = document.getElementById('reviewsGrid');
-                if (grid) {
-                    grid.innerHTML = '<div class="review-loading" style="color:#ef4444;">Reviews load nahi ho sake</div>';
-                }
-                const rc = document.getElementById('storeRatingCount');
-                if (rc) rc.textContent = 'Error';
+                console.error('Reviews error:', error);
             }
         }
 
         function renderReviewCards() {
             const grid = document.getElementById('reviewsGrid');
             const seeMoreContainer = document.getElementById('seeMoreContainer');
-
             if (!grid) return;
 
             if (allReviewsData.length === 0) {
@@ -825,7 +893,6 @@
             }
 
             const visibleReviews = allReviewsData.slice(0, reviewsShown);
-
             grid.innerHTML = visibleReviews.map(function(r) {
                 const initials = r.name.split(' ').map(function(n) { return n[0]; }).join('').toUpperCase().slice(0, 2);
                 const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
@@ -876,7 +943,6 @@
             }
         }
 
-        // Load on page ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(loadReviews, 500);
