@@ -202,6 +202,19 @@
 
             <div class="search-box">
     <input 
+        <div class="search-box" style="position:relative;">
+    <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Search mobile accessories..." 
+        oninput="liveSearch(this.value)"
+        autocomplete="off"
+    >
+    <button onclick="searchProducts()">
+        <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
+    <div id="autocompleteBox" style="display:none; position:absolute; top:100%; left:0; right:0; background:white; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.15); margin-top:5px; z-index:1000; max-height:300px; overflow-y:auto;"></div>
+</div>
         type="text" 
         id="searchInput" 
         placeholder="Search mobile accessories..." 
@@ -216,6 +229,10 @@
             <div class="nav-icons">
                 <a href="track-order.html" title="Track Order" style="display:flex; align-items:center; gap:5px; text-decoration:none; color:#7c3aed; font-weight:600; font-size:13px;">
                     <i class="fa-solid fa-truck-fast"></i> <span class="track-text">Track</span>
+                    <a href="wishlist.html" title="Wishlist" style="position:relative; text-decoration:none; color:#111827;">
+    <i class="fa-regular fa-heart"></i>
+    <span id="wishlistCount" style="display:none; position:absolute; top:-8px; right:-10px; background:#ef4444; color:white; font-size:10px; width:18px; height:18px; border-radius:50%; align-items:center; justify-content:center; font-weight:700;">0</span>
+</a>
                 </a>
                 <a href="#" title="Wishlist">
                     <i class="fa-regular fa-heart"></i>
@@ -483,6 +500,19 @@
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(loadReviews, 500);
         });
+        .autocomplete-item {
+    padding: 12px 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #f1f5f9;
+    transition: 0.2s;
+}
+.autocomplete-item:last-child { border-bottom: none; }
+.autocomplete-item:hover { background: #f8fafc; }
+.autocomplete-item span { flex: 1; font-size: 14px; color: #111827; }
+.autocomplete-item small { font-size: 11px; }
     </script>
 
 </body>
