@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wishlist | GEN.Z GADGETS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; padding-bottom: 50px; }
+        .header { background: white; border-bottom: 1px solid #e2e8f0; padding: 15px 20px; position: sticky; top: 0; z-index: 100; }
+        .header-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 20px; font-weight: 900; text-decoration: none; color: #111827; }
+        .logo span { color: #7c3aed; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+        .page-title { font-size: 28px; color: #111827; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; }
+        .page-title i { color: #ef4444; }
+        .page-subtitle { color: #64748b; margin-bottom: 25px; }
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+        .wishlist-card {
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            transition: 0.3s;
+        }
+        .wishlist-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .wc-image {
+            height: 200px;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .wc-image img { width: 100%; height: 100%; object-fit: cover; }
+        .wc-info { padding: 15px; }
+        .wc-info .category { font-size: 11px; color: #7c3aed; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
+        .wc-info h3 { font-size: 15px; color: #111827; margin-bottom: 8px; line-height: 1.3; min-height: 40px; }
+        .wc-info .price { font-size: 17px; font-weight: 800; color: #111827; margin-bottom: 12px; }
+        .wc-buttons { display: flex; gap: 8px; }
+        .wc-buttons button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .add-cart { background: #111827; color: white; }
+        .add-cart:hover { background: #7c3aed; }
+        .remove-btn { background: #fee2e2; color: #dc2626; }
+        .remove-btn:hover { background: #dc2626; color: white; }
+        .empty-wishlist {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            border-radius: 16px;
+        }
+        .empty-wishlist i { font-size: 70px; color: #cbd5e1; margin-bottom: 20px; display: block; }
+        .empty-wishlist h2 { color: #1e293b; margin-bottom: 10px; }
+        .empty-wishlist p { color: #94a3b8; margin-bottom: 25px; }
+        .empty-wishlist a {
+            display: inline-block;
+            background: linear-gradient(135deg, #7c3aed, #06b6d4);
+            color: white;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+        .loading-box { text-align: center; padding: 80px 20px; color: #94a3b8; }
+        @media (max-width: 600px) {
+            .wishlist-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .wc-image { height: 160px; }
+            .wc-info h3 { font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">GEN.Z <span>GADGETS</span></a>
+            <a href="cart.html" style="position:relative; text-decoration:none; color:#111827;">
+                <i class="fa-solid fa-cart-shopping" style="font-size:20px;"></i>
+                <span id="cartCount" style="position:absolute; top:-8px; right:-10px; background:#7c3aed; color:white; font-size:10px; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700;">0</span>
+            </a>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="page-title"><i class="fa-solid fa-heart"></i> My Wishlist</h1>
+        <p class="page-subtitle">Aapke pasandeeda products</p>
+
+        <div id="wishlistContent">
+            <div class="loading-box">
+                <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/firebase.js"></script>
+    <script src="js/products.js"></script>
+    <script>
+        function waitForFirebase(callback) {
+            if (window.firebaseDB) callback();
+            else setTimeout(function() { waitForFirebase(callback); }, 100);
+        }
+
+        function updateCartBadge() {
+            const cart = JSON.parse(localStorage.getItem('genzCart')) || [];
+            const totalItems = cart.reduce(function(sum, item) { return sum + item.quantity; }, 0);
+            const cartElement = document.getElementById('cartCount');
+            if (cartElement) cartElement.textContent = totalItems;
+        }
+
+        async function loadWishlist() {
+            const container = document.getElementById('wishlistContent');
+            const wishlistIds = JSON.parse(localStorage.getItem('genzWishlist')) || [];
+
+            if (wishlistIds.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-wishlist">
+                        <i class="fa-regular fa-heart"></i>
+                        <h2>Wishlist Khali Hai</h2>
+                        <p>Products par heart icon dabayein wishlist mein add karne ke liye</p>
+                        <a href="index.html"><i class="fa-solid fa-store"></i> Browse Products</a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Fetch products from Firebase
+            const allProducts = await new Promise(function(resolve) {
+                waitForFirebase(async function() {
+                    try {
+                        const { db, collection, getDocs } = window.firebaseDB;
+                        const snap = await getDocs(collection(db, 'products'));
+                        const list = [];
+                        snap.forEach(function(doc) {
+                            list.push(Object.assign({ id: parseInt(doc.id) }, doc.data()));
+                        });
+                        resolve(list);
+                    } catch (e) {
+                        resolve([]);
+                    }
+                });
+            });
+
+            const wishlistProducts = allProducts.filter(function(p) {
+                return wishlistIds.indexOf(p.id) !== -1;
+            });
+
+            if (wishlistProducts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-wishlist">
+                        <i class="fa-regular fa-heart"></i>
+                        <h2>Wishlist Khali Hai</h2>
+                        <p>Products par heart icon dabayein wishlist mein add karne ke liye</p>
+                        <a href="index.html"><i class="fa-solid fa-store"></i> Browse Products</a>
+                    </div>
+                `;
+                return;
+            }
+
+            const grid = document.createElement('div');
+            grid.className = 'wishlist-grid';
+
+            grid.innerHTML = wishlistProducts.map(function(p) {
+                let imgHTML;
+                if (p.image && p.image.indexOf('http') === 0) {
+                    imgHTML = '<img src="' + p.image + '" alt="' + p.name + '">';
+                } else {
+                    imgHTML = '<i class="fa-solid ' + (p.icon || 'fa-box') + '" style="font-size:60px; color:#7c3aed;"></i>';
+                }
+
+                return `
+                    <div class="wishlist-card">
+                        <div class="wc-image">${imgHTML}</div>
+                        <div class="wc-info">
+                            <p class="category">${p.category}</p>
+                            <h3>${p.name}</h3>
+                            <div class="price">Rs. ${Number(p.price).toLocaleString()}</div>
+                            <div class="wc-buttons">
+                                <button class="add-cart" onclick="addToCart(${p.id})">
+                                    <i class="fa-solid fa-cart-plus"></i> Add
+                                </button>
+                                <button class="remove-btn" onclick="removeFromWishlist(${p.id})">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = '';
+            container.appendChild(grid);
+        }
+
+        function removeFromWishlist(productId) {
+            let wishlist = JSON.parse(localStorage.getItem('genzWishlist')) || [];
+            wishlist = wishlist.filter(function(id) { return id !== productId; });
+            localStorage.setItem('genzWishlist', JSON.stringify(wishlist));
+            loadWishlist();
+        }
+
+        async function addToCart(productId) {
+            const allProducts = await new Promise(function(resolve) {
+                waitForFirebase(async function() {
+                    try {
+                        const { db, collection, getDocs } = window.firebaseDB;
+                        const snap = await getDocs(collection(db, 'products'));
+                        const list = [];
+                        snap.forEach(function(doc) {
+                            list.push(Object.assign({ id: parseInt(doc.id) }, doc.data()));
+                        });
+                        resolve(list);
+                    } catch (e) {
+                        resolve([]);
+                    }
+                });
+            });
+
+            const product = allProducts.find(function(p) { return p.id === productId; });
+            if (!product) return;
+            if (product.stock <= 0) { alert('Out of stock!'); return; }
+
+            let cart = JSON.parse(localStorage.getItem('genzCart')) || [];
+            const existing = cart.find(function(item) { return item.id === productId; });
+
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id, name: product.name, price: product.price,
+                    icon: product.icon || 'fa-box', quantity: 1, maxStock: product.stock
+                });
+            }
+
+            localStorage.setItem('genzCart', JSON.stringify(cart));
+            updateCartBadge();
+            alert('✅ ' + product.name + ' cart mein add ho gaya!');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartBadge();
+            setTimeout(loadWishlist, 500);
+        });
+    </script>
+</body>
+</html>
