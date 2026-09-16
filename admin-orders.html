@@ -12,11 +12,13 @@
         .header-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .logo { font-size: 20px; font-weight: 900; text-decoration: none; color: #111827; }
         .logo span { color: #7c3aed; }
-        .nav-links { display: flex; gap: 12px; align-items: center; }
+        .nav-links { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
         .nav-links a { color: #64748b; text-decoration: none; font-weight: 600; padding: 8px 15px; border-radius: 8px; font-size: 14px; }
         .nav-links a:hover { background: #f1f5f9; color: #111827; }
         .nav-links a.active { background: #ede9fe; color: #7c3aed; }
         .nav-links a .badge { background: #ef4444; color: white; font-size: 10px; padding: 2px 7px; border-radius: 20px; margin-left: 5px; }
+        .nav-links a.logout { color: #dc2626; }
+        .nav-links a.logout:hover { background: #fee2e2; }
         .container { max-width: 1200px; margin: 0 auto; padding: 25px 20px; }
         .page-title { font-size: 26px; color: #111827; margin-bottom: 5px; }
         .page-subtitle { color: #64748b; margin-bottom: 25px; }
@@ -38,7 +40,7 @@
         .order-body { padding: 20px; }
         .order-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
         .order-row strong { color: #475569; }
-        .order-row span { color: #111827; font-weight: 600; }
+        .order-row span { color: #111827; font-weight: 600; text-align: right; }
         .order-items-list { background: #f8fafc; border-radius: 10px; padding: 12px 15px; margin: 12px 0; }
         .order-item-line { display: flex; justify-content: space-between; padding: 5px 0; font-size: 14px; border-bottom: 1px dashed #e2e8f0; }
         .order-item-line:last-child { border-bottom: none; }
@@ -53,7 +55,6 @@
             padding: 8px 15px; border: none; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer;
         }
         .order-actions select { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
-        .order-actions .view-btn { background: #7c3aed; color: white; }
         .order-actions .delete-btn { background: #fee2e2; color: #dc2626; }
         .order-actions .delete-btn:hover { background: #dc2626; color: white; }
         .order-actions .wa-btn { background: #25D366; color: white; text-decoration: none; padding: 8px 15px; border-radius: 8px; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 5px; }
@@ -81,16 +82,15 @@
         <div class="header-inner">
             <a href="admin-mobile.html" class="logo">GEN.Z <span>GADGETS</span></a>
             <div class="nav-links">
-                <a href="admin-mobile.html">
-                    <i class="fa-solid fa-box"></i> Products
-                </a>
+                <a href="admin-mobile.html"><i class="fa-solid fa-box"></i> Products</a>
                 <a href="admin-orders.html" class="active">
                     <i class="fa-solid fa-receipt"></i> Orders
                     <span class="badge" id="orderBadge">0</span>
                 </a>
-                <a href="index.html">
-                    <i class="fa-solid fa-store"></i> Store
-                </a>
+                <a href="admin-reviews.html"><i class="fa-solid fa-star"></i> Reviews</a>
+                <a href="admin-categories.html"><i class="fa-solid fa-layer-group"></i> Categories</a>
+                <a href="index.html"><i class="fa-solid fa-store"></i> Store</a>
+                <a href="#" onclick="logoutAdmin()" class="logout"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
             </div>
         </div>
     </header>
@@ -138,6 +138,30 @@
             <div class="loading">Loading orders...</div>
         </div>
     </div>
+
+    <!-- ===== AUTH CHECK ===== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZRn0KADLkLTexwzOpnqR-VKzRqQKPUGY",
+            authDomain: "genz-gadgets.firebaseapp.com",
+            projectId: "genz-gadgets",
+            storageBucket: "genz-gadgets.firebasestorage.app",
+            messagingSenderId: "473246555348",
+            appId: "1:473246555348:web:9944b3fc49a8a57e966f41"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        onAuthStateChanged(auth, function(user) {
+            if (!user) {
+                window.location.href = 'admin-login.html';
+            }
+        });
+    </script>
 
     <script type="module" src="js/firebase.js"></script>
     <script>
@@ -266,7 +290,7 @@
                                 <strong>🏠 Address:</strong>
                                 <span>${order.customer.address}</span>
                             </div>
-                            ${order.customer.instructions !== 'None' ? `
+                            ${order.customer.instructions && order.customer.instructions !== 'None' ? `
                             <div class="order-row">
                                 <strong>📝 Instructions:</strong>
                                 <span>${order.customer.instructions}</span>
@@ -344,8 +368,18 @@
             }
         }
 
+        function logoutAdmin() {
+            if (!confirm('Logout karna chahte hain?')) return;
+            import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js').then(function(module) {
+                const auth = module.getAuth();
+                module.signOut(auth).then(function() {
+                    window.location.href = 'admin-login.html';
+                });
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(loadOrders, 500);
+            setTimeout(loadOrders, 800);
         });
     </script>
 </body>
