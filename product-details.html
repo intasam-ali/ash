@@ -184,13 +184,17 @@
     <header class="header">
         <div class="container navbar">
             <a href="index.html" class="logo">GEN.Z <span>GADGETS</span></a>
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search mobile accessories...">
-                <button onclick="goToHomeSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
-            </div>
+            
+        <div class="search-box" style="position:relative;">
+    <input type="text" id="searchInput" placeholder="Search mobile accessories...">
+    <button onclick="goToHomeSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
+</div>
             <div class="nav-icons">
                 <a href="track-order.html" title="Track Order" style="display:flex; align-items:center; gap:5px; text-decoration:none; color:#7c3aed; font-weight:600; font-size:13px;">
                     <i class="fa-solid fa-truck-fast"></i>
+                    <a href="wishlist.html" title="Wishlist" style="position:relative; text-decoration:none; color:#111827;">
+    <i class="fa-regular fa-heart"></i>
+    <span id="wishlistCount" style="display:none; position:absolute; top:-8px; right
                 </a>
                 <a href="#" title="Wishlist"><i class="fa-regular fa-heart"></i></a>
                 <a href="cart.html" class="cart-icon" title="Shopping Cart">
