@@ -7,6 +7,300 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
+        /* ===== GLOBAL BLACK THEME ===== */
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-darker: #050505;
+            --card-bg: #141414;
+            --border-dark: #262626;
+            --text-light: #f5f5f5;
+            --text-muted: #a3a3a3;
+            --purple: #7c3aed;
+            --purple-light: #a78bfa;
+            --cyan: #06b6d4;
+        }
+
+        * { transition: background-color 0.3s ease, color 0.3s ease; }
+
+        /* ===== BODY BACKGROUND ===== */
+        body {
+            background: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+
+        /* Animated Grid Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
+                linear-gradient(rgba(124, 58, 237, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(124, 58, 237, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 50px 50px, 50px 50px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ===== HEADER BLACK THEME ===== */
+        .header {
+            background: rgba(10, 10, 10, 0.95) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-dark) !important;
+        }
+
+        .navbar { min-height: 80px; }
+
+        /* ===== PROFESSIONAL LOGO ===== */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: white !important;
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            transition: transform 0.3s;
+        }
+        .logo:hover { transform: scale(1.02); }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+            overflow: hidden;
+        }
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        .logo-icon svg {
+            width: 28px;
+            height: 28px;
+            z-index: 1;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+        .logo-text .genz {
+            font-size: 20px;
+            font-weight: 900;
+            color: white;
+            letter-spacing: 1px;
+        }
+        .logo-text .gadgets {
+            font-size: 11px;
+            font-weight: 700;
+            color: #a78bfa;
+            letter-spacing: 4px;
+            margin-top: 2px;
+        }
+
+        /* ===== SEARCH BOX BLACK ===== */
+        .search-box {
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border-dark) !important;
+            position: relative;
+        }
+        .search-box input {
+            color: white !important;
+            background: transparent !important;
+        }
+        .search-box input::placeholder { color: #737373; }
+        .search-box button {
+            background: linear-gradient(135deg, #7c3aed, #06b6d4) !important;
+        }
+
+        /* ===== NAV ICONS ===== */
+        .nav-icons a {
+            color: white !important;
+            transition: color 0.3s;
+        }
+        .nav-icons a:hover { color: #a78bfa !important; }
+
+        /* ===== HERO BLACK THEME ===== */
+        .hero {
+            background: transparent !important;
+            position: relative;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 70% 50%, rgba(124, 58, 237, 0.2), transparent 60%);
+            pointer-events: none;
+        }
+        .hero h1 { color: white !important; }
+        .hero h1 span {
+            background: linear-gradient(135deg, #a78bfa, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-text > p:not(.small-title) { color: #a3a3a3 !important; }
+
+        /* ===== SECTIONS BLACK ===== */
+        .categories-section,
+        .products-section,
+        .about-section,
+        .store-rating-section {
+            background: transparent !important;
+        }
+
+        .section-heading h2 { color: white !important; }
+        .section-heading > a { color: #a78bfa !important; }
+
+        /* ===== CATEGORY CARDS BLACK ===== */
+        .category-card {
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border-dark) !important;
+        }
+        .category-card:hover {
+            border-color: var(--purple) !important;
+            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.2) !important;
+            transform: translateY(-5px);
+        }
+        .category-card h3 { color: white !important; }
+        .category-card p { color: var(--text-muted) !important; }
+        .category-icon {
+            background: rgba(124, 58, 237, 0.15) !important;
+            color: #a78bfa !important;
+        }
+
+        /* ===== PRODUCT CARDS BLACK ===== */
+        .product-card {
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border-dark) !important;
+        }
+        .product-card:hover {
+            border-color: var(--purple) !important;
+            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.2) !important;
+        }
+        .product-image { background: #1a1a1a !important; }
+        .product-info h3 { color: white !important; }
+        .product-info .product-category { color: #a78bfa !important; }
+        .product-info .price strong { color: white !important; }
+        .product-info .price del { color: #737373 !important; }
+        .add-cart-btn {
+            background: linear-gradient(135deg, #7c3aed, #06b6d4) !important;
+            color: white !important;
+        }
+        .add-cart-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);
+        }
+
+        /* ===== RATING SECTION BLACK ===== */
+        .rating-header {
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border-dark) !important;
+        }
+        .rating-summary { border-right-color: var(--border-dark) !important; }
+        .rating-count { color: var(--text-muted) !important; }
+        .rating-info h2 { color: white !important; }
+        .rating-info p { color: var(--text-muted) !important; }
+
+        .review-card {
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border-dark) !important;
+        }
+        .review-name strong { color: white !important; }
+        .review-text { color: #d4d4d4 !important; }
+
+        /* ===== PROMO BLACK ===== */
+        .promo-box {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%) !important;
+            border: 1px solid var(--border-dark);
+            position: relative;
+            overflow: hidden;
+        }
+        .promo-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.3), transparent 70%);
+            border-radius: 50%;
+        }
+        .promo-box h2 { color: white !important; }
+        .promo-box p { color: var(--text-muted) !important; }
+
+        /* ===== ABOUT BLACK ===== */
+        .about-section {
+            background: linear-gradient(135deg, #0a0a0a, #141414) !important;
+            border-top: 1px solid var(--border-dark);
+            border-bottom: 1px solid var(--border-dark);
+        }
+        .about-section h2 { color: white !important; }
+        .about-content > p { color: var(--text-muted) !important; }
+        .about-content h2 span {
+            background: linear-gradient(135deg, #a78bfa, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ===== OWNER BADGE ===== */
+        .owner-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.15));
+            border: 1px solid rgba(124, 58, 237, 0.4);
+            padding: 8px 18px;
+            border-radius: 30px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #a78bfa;
+            font-weight: 700;
+        }
+        .owner-badge i { color: #f59e0b; }
+
+        /* ===== FOOTER BLACK ===== */
+        .footer {
+            background: var(--bg-darker) !important;
+            border-top: 1px solid var(--border-dark);
+        }
+        .footer-content p { color: var(--text-muted) !important; }
+        .footer-links h3 { color: white !important; }
+        .footer-links a { color: var(--text-muted) !important; }
+        .footer-links a:hover { color: #a78bfa !important; }
+        .footer-logo { color: white !important; }
+
+        .copyright {
+            background: #000 !important;
+            border-top: 1px solid var(--border-dark);
+        }
+        .copyright p { color: #737373 !important; }
+        .copyright strong { color: #a78bfa; }
+
         /* ===== SEARCH AUTOCOMPLETE ===== */
         .search-box { position: relative; }
         .autocomplete-item {
@@ -15,34 +309,31 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid #1a1a1a;
             transition: 0.2s;
         }
         .autocomplete-item:last-child { border-bottom: none; }
-        .autocomplete-item:hover { background: #f8fafc; }
-        .autocomplete-item span { flex: 1; font-size: 14px; color: #111827; }
-        .autocomplete-item small { font-size: 11px; color: #7c3aed; font-weight: 700; }
+        .autocomplete-item:hover { background: #1a1a1a; }
+        .autocomplete-item span { flex: 1; font-size: 14px; color: white; }
+        .autocomplete-item small { font-size: 11px; color: #a78bfa; font-weight: 700; }
         #autocompleteBox {
             display: none;
             position: absolute;
             top: 100%;
             left: 0;
             right: 0;
-            background: white;
+            background: var(--card-bg);
+            border: 1px solid var(--border-dark);
             border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             margin-top: 5px;
             z-index: 1000;
             max-height: 300px;
             overflow-y: auto;
         }
 
-        /* ===== WISHLIST ICON ===== */
-        .wishlist-icon {
-            position: relative;
-            text-decoration: none;
-            color: #111827;
-        }
+        /* ===== WISHLIST ===== */
+        .wishlist-icon { position: relative; }
         .wishlist-count {
             display: none;
             position: absolute;
@@ -60,156 +351,40 @@
         }
         .wishlist-count.show { display: flex; }
 
-        /* ===== STORE RATING SECTION ===== */
-        .store-rating-section {
-            padding: 70px 0;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        /* ===== BUTTONS ===== */
+        .primary-btn {
+            background: linear-gradient(135deg, #7c3aed, #06b6d4) !important;
+            color: white !important;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
         }
-        .rating-header {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 40px;
-            align-items: center;
-            background: #fff;
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
-            border: 1px solid #e2e8f0;
-        }
-        .rating-summary {
-            text-align: center;
-            padding: 20px;
-            border-right: 2px dashed #e2e8f0;
-        }
-        .rating-big {
-            font-size: 72px;
-            font-weight: 900;
-            color: #7c3aed;
-            line-height: 1;
-            margin-bottom: 10px;
-        }
-        .rating-stars {
-            font-size: 28px;
-            color: #f59e0b;
-            letter-spacing: 3px;
-            margin-bottom: 8px;
-        }
-        .rating-count {
-            color: #64748b;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        .rating-info h2 {
-            font-size: 28px;
-            color: #111827;
-            margin-bottom: 8px;
-        }
-        .rating-info p {
-            color: #64748b;
-            margin-bottom: 20px;
-            font-size: 15px;
-        }
-        .write-review-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, #7c3aed, #06b6d4);
-            color: white;
-            text-decoration: none;
-            padding: 12px 25px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 14px;
-            transition: 0.3s;
-        }
-        .write-review-btn:hover {
+        .primary-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(124,58,237,0.35);
+            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.5);
         }
-        .reviews-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+
+        /* ===== WHATSAPP ===== */
+        .whatsapp-btn {
+            background: linear-gradient(135deg, #25D366, #128C7E) !important;
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4) !important;
         }
-        .review-loading {
-            grid-column: 1/-1;
-            text-align: center;
-            padding: 40px;
-            color: #94a3b8;
+
+        /* ===== MOBILE MENU ===== */
+        .mobile-menu {
+            background: var(--bg-darker) !important;
+            border-top: 1px solid var(--border-dark);
         }
-        .review-card {
-            background: #fff;
-            border-radius: 16px;
-            padding: 22px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        .mobile-menu a {
+            color: white !important;
+            border-bottom: 1px solid var(--border-dark);
         }
-        .review-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-        }
-        .review-top {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .review-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #7c3aed, #06b6d4);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 18px;
-            flex-shrink: 0;
-        }
-        .review-name { flex: 1; }
-        .review-name strong {
-            display: block;
-            color: #111827;
-            font-size: 15px;
-        }
-        .review-name small {
-            color: #94a3b8;
-            font-size: 12px;
-        }
-        .review-stars {
-            color: #f59e0b;
-            font-size: 14px;
-            letter-spacing: 2px;
-        }
-        .review-text {
-            color: #475569;
-            font-size: 14px;
-            line-height: 1.6;
-            flex: 1;
-        }
-        .review-product {
-            background: #ede9fe;
-            color: #7c3aed;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            align-self: flex-start;
-        }
-        @media (max-width: 900px) {
-            .rating-header { grid-template-columns: 1fr; gap: 20px; padding: 25px; }
-            .rating-summary { border-right: none; border-bottom: 2px dashed #e2e8f0; padding-bottom: 25px; }
-            .reviews-grid { grid-template-columns: repeat(2, 1fr); }
-            .rating-big { font-size: 60px; }
-        }
-        @media (max-width: 600px) {
-            .reviews-grid { grid-template-columns: 1fr; }
-            .rating-info h2 { font-size: 22px; }
+        .mobile-menu a:hover { color: #a78bfa !important; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .logo-text .genz { font-size: 16px; }
+            .logo-text .gadgets { font-size: 9px; letter-spacing: 3px; }
+            .logo-icon { width: 38px; height: 38px; }
+            .logo-icon svg { width: 22px; height: 22px; }
         }
     </style>
 </head>
@@ -220,7 +395,18 @@
     <header class="header">
         <div class="container navbar">
             <a href="index.html" class="logo">
-                GEN.Z <span>GADGETS</span>
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 2L3 6V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V6L17 2H7Z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                        <circle cx="12" cy="13" r="3" stroke="white" stroke-width="2"/>
+                        <path d="M7 2V6H3" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M17 2V6H21" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <span class="genz">GEN.Z</span>
+                    <span class="gadgets">GADGETS</span>
+                </div>
             </a>
 
             <div class="search-box">
@@ -238,16 +424,16 @@
             </div>
 
             <div class="nav-icons">
-                <a href="track-order.html" title="Track Order" style="display:flex; align-items:center; gap:5px; text-decoration:none; color:#7c3aed; font-weight:600; font-size:13px;">
+                <a href="track-order.html" title="Track Order" style="display:flex; align-items:center; gap:5px; text-decoration:none; font-weight:600; font-size:13px;">
                     <i class="fa-solid fa-truck-fast"></i> <span class="track-text">Track</span>
                 </a>
                 <a href="wishlist.html" class="wishlist-icon" title="Wishlist">
                     <i class="fa-regular fa-heart"></i>
                     <span id="wishlistCount" class="wishlist-count">0</span>
                 </a>
-                <a href="cart.html" class="cart-icon" title="Shopping Cart">
+                <a href="cart.html" class="cart-icon" title="Shopping Cart" style="position:relative;">
                     <i class="fa-solid fa-cart-shopping"></i>
-                    <span id="cartCount">0</span>
+                    <span id="cartCount" style="position:absolute; top:-8px; right:-10px; background:linear-gradient(135deg,#7c3aed,#06b6d4); color:white; font-size:10px; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700;">0</span>
                 </a>
                 <button class="menu-btn" onclick="toggleMenu()">
                     <i class="fa-solid fa-bars"></i>
@@ -268,7 +454,7 @@
     </header>
 
 
-    <!-- ================= HERO SECTION ================= -->
+    <!-- ================= HERO ================= -->
     <section class="hero">
         <div class="container hero-content">
             <div class="hero-text">
@@ -302,7 +488,7 @@
             </div>
 
             <div class="categories-grid" id="categoriesGrid">
-                <div style="grid-column:1/-1; text-align:center; padding:30px; color:#94a3b8;">
+                <div style="grid-column:1/-1; text-align:center; padding:30px; color:#a3a3a3;">
                     <i class="fa-solid fa-spinner fa-spin"></i> Loading categories...
                 </div>
             </div>
@@ -323,9 +509,9 @@
                 </a>
             </div>
 
-            <div id="filterStatus" style="display:none; margin-bottom:20px; padding:12px 20px; background:#ede9fe; border-radius:10px; border:1px solid #c4b5fd; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
-                <span style="color:#6d28d9; font-weight:700; font-size:14px;" id="filterText"></span>
-                <button onclick="clearFilter()" style="background:#7c3aed; color:white; border:none; padding:6px 15px; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer;">
+            <div id="filterStatus" style="display:none; margin-bottom:20px; padding:12px 20px; background:rgba(124,58,237,0.15); border-radius:10px; border:1px solid rgba(124,58,237,0.4); align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                <span style="color:#a78bfa; font-weight:700; font-size:14px;" id="filterText"></span>
+                <button onclick="clearFilter()" style="background:linear-gradient(135deg,#7c3aed,#06b6d4); color:white; border:none; padding:6px 15px; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer;">
                     <i class="fa-solid fa-xmark"></i> Clear
                 </button>
             </div>
@@ -364,12 +550,12 @@
     <!-- ================= PROMO ================= -->
     <section class="promo-section">
         <div class="container promo-box">
-            <div>
+            <div style="position:relative; z-index:1;">
                 <p>GEN.Z GADGETS</p>
                 <h2>Smart Accessories.<br>Better Prices.</h2>
                 <p>Quality gadgets without breaking the bank.</p>
             </div>
-            <a href="#products" class="primary-btn">Explore Products</a>
+            <a href="#products" class="primary-btn" style="position:relative; z-index:1;">Explore Products</a>
         </div>
     </section>
 
@@ -380,13 +566,18 @@
             <div>
                 <p class="small-title">ABOUT US</p>
                 <h2>Your Everyday <span>Tech Store.</span></h2>
+                <div class="owner-badge">
+                    <i class="fa-solid fa-crown"></i>
+                    <span>Founded by <strong style="color:white;">INTASAM ALI</strong></span>
+                </div>
             </div>
             <p>
                 GEN.Z GADGETS is a Pakistan-based online store
                 focused on mobile accessories and everyday tech
                 essentials. Our goal is to provide useful products
                 at reasonable prices with a simple shopping
-                experience.
+                experience. We are committed to bringing you the
+                best quality gadgets at the most affordable prices.
             </p>
         </div>
     </section>
@@ -396,8 +587,24 @@
     <footer class="footer" id="contact">
         <div class="container footer-content">
             <div>
-                <a href="#" class="logo footer-logo">GEN.Z <span>GADGETS</span></a>
+                <a href="#" class="logo footer-logo" style="margin-bottom:15px;">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 2L3 6V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V6L17 2H7Z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                            <circle cx="12" cy="13" r="3" stroke="white" stroke-width="2"/>
+                            <path d="M7 2V6H3" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M17 2V6H21" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="genz">GEN.Z</span>
+                        <span class="gadgets">GADGETS</span>
+                    </div>
+                </a>
                 <p>Mobile accessories for the next generation.</p>
+                <p style="margin-top:15px; color:#a78bfa; font-weight:700; font-size:13px;">
+                    <i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Owned by INTASAM ALI
+                </p>
             </div>
             <div class="footer-links">
                 <h3>Quick Links</h3>
@@ -417,7 +624,7 @@
             </div>
         </div>
         <div class="copyright">
-            <p>© 2026 GEN.Z GADGETS. All rights reserved.</p>
+            <p>© 2026 <strong>GEN.Z GADGETS</strong> — Owned by <strong>INTASAM ALI</strong>. All rights reserved.</p>
         </div>
     </footer>
 
@@ -437,7 +644,6 @@
     <script src="js/script.js"></script>
 
     <script>
-        // ===== Reviews Loader =====
         function waitForFirebase(callback) {
             if (window.firebaseDB) callback();
             else setTimeout(function() { waitForFirebase(callback); }, 100);
@@ -449,12 +655,8 @@
                     const { db, collection, getDocs } = window.firebaseDB;
                     const snapshot = await getDocs(collection(db, 'reviews'));
                     const reviews = [];
-                    snapshot.forEach(function(doc) {
-                        reviews.push(doc.data());
-                    });
-                    reviews.sort(function(a, b) {
-                        return new Date(b.date) - new Date(a.date);
-                    });
+                    snapshot.forEach(function(doc) { reviews.push(doc.data()); });
+                    reviews.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
 
                     let totalRating = 0;
                     reviews.forEach(function(r) { totalRating += r.rating; });
@@ -465,9 +667,7 @@
 
                     const fullStars = Math.round(avgRating);
                     let starsHTML = '';
-                    for (let i = 1; i <= 5; i++) {
-                        starsHTML += i <= fullStars ? '★' : '☆';
-                    }
+                    for (let i = 1; i <= 5; i++) starsHTML += i <= fullStars ? '★' : '☆';
                     document.getElementById('storeRatingStars').textContent = starsHTML;
 
                     const grid = document.getElementById('reviewsGrid');
@@ -479,33 +679,24 @@
                     grid.innerHTML = reviews.slice(0, 6).map(function(r) {
                         const initials = r.name.split(' ').map(function(n) { return n[0]; }).join('').toUpperCase().slice(0, 2);
                         const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
-                        const dateStr = new Date(r.date).toLocaleDateString('en-PK', {
-                            day: 'numeric', month: 'short', year: 'numeric'
-                        });
+                        const dateStr = new Date(r.date).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' });
 
                         return '<div class="review-card">' +
                             '<div class="review-top">' +
                                 '<div class="review-avatar">' + initials + '</div>' +
-                                '<div class="review-name">' +
-                                    '<strong>' + r.name + '</strong>' +
-                                    '<small>' + dateStr + '</small>' +
-                                '</div>' +
+                                '<div class="review-name"><strong>' + r.name + '</strong><small>' + dateStr + '</small></div>' +
                             '</div>' +
                             '<div class="review-stars">' + stars + '</div>' +
                             '<div class="review-text">' + r.text + '</div>' +
                             (r.productName && r.productName !== 'Store' ? '<div class="review-product">📦 ' + r.productName + '</div>' : '') +
                         '</div>';
                     }).join('');
-
                 } catch (error) {
                     console.error('Reviews load error:', error);
-                    document.getElementById('reviewsGrid').innerHTML =
-                        '<div class="review-loading">Reviews load nahi ho sake</div>';
                 }
             });
         }
 
-        // ===== Wishlist Badge Update =====
         function updateWishlistBadge() {
             const wishlist = JSON.parse(localStorage.getItem('genzWishlist')) || [];
             const badge = document.getElementById('wishlistCount');
