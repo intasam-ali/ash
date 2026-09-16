@@ -3,23 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>GEN.Z GADGETS | Mobile Accessories</title>
-
     <link rel="stylesheet" href="css/style.css">
-
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    >
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
+        /* ===== SEARCH AUTOCOMPLETE ===== */
+        .search-box { position: relative; }
+        .autocomplete-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #f1f5f9;
+            transition: 0.2s;
+        }
+        .autocomplete-item:last-child { border-bottom: none; }
+        .autocomplete-item:hover { background: #f8fafc; }
+        .autocomplete-item span { flex: 1; font-size: 14px; color: #111827; }
+        .autocomplete-item small { font-size: 11px; color: #7c3aed; font-weight: 700; }
+        #autocompleteBox {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            margin-top: 5px;
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        /* ===== WISHLIST ICON ===== */
+        .wishlist-icon {
+            position: relative;
+            text-decoration: none;
+            color: #111827;
+        }
+        .wishlist-count {
+            display: none;
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+        .wishlist-count.show { display: flex; }
+
         /* ===== STORE RATING SECTION ===== */
         .store-rating-section {
             padding: 70px 0;
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
         }
-
         .rating-header {
             display: grid;
             grid-template-columns: 280px 1fr;
@@ -32,13 +77,11 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.06);
             border: 1px solid #e2e8f0;
         }
-
         .rating-summary {
             text-align: center;
             padding: 20px;
             border-right: 2px dashed #e2e8f0;
         }
-
         .rating-big {
             font-size: 72px;
             font-weight: 900;
@@ -46,32 +89,27 @@
             line-height: 1;
             margin-bottom: 10px;
         }
-
         .rating-stars {
             font-size: 28px;
             color: #f59e0b;
             letter-spacing: 3px;
             margin-bottom: 8px;
         }
-
         .rating-count {
             color: #64748b;
             font-size: 14px;
             font-weight: 600;
         }
-
         .rating-info h2 {
             font-size: 28px;
             color: #111827;
             margin-bottom: 8px;
         }
-
         .rating-info p {
             color: #64748b;
             margin-bottom: 20px;
             font-size: 15px;
         }
-
         .write-review-btn {
             display: inline-flex;
             align-items: center;
@@ -85,25 +123,21 @@
             font-size: 14px;
             transition: 0.3s;
         }
-
         .write-review-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(124,58,237,0.35);
         }
-
         .reviews-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
         }
-
         .review-loading {
             grid-column: 1/-1;
             text-align: center;
             padding: 40px;
             color: #94a3b8;
         }
-
         .review-card {
             background: #fff;
             border-radius: 16px;
@@ -115,18 +149,15 @@
             flex-direction: column;
             gap: 12px;
         }
-
         .review-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 40px rgba(0,0,0,0.1);
         }
-
         .review-top {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-
         .review-avatar {
             width: 45px;
             height: 45px;
@@ -140,33 +171,27 @@
             font-size: 18px;
             flex-shrink: 0;
         }
-
         .review-name { flex: 1; }
-
         .review-name strong {
             display: block;
             color: #111827;
             font-size: 15px;
         }
-
         .review-name small {
             color: #94a3b8;
             font-size: 12px;
         }
-
         .review-stars {
             color: #f59e0b;
             font-size: 14px;
             letter-spacing: 2px;
         }
-
         .review-text {
             color: #475569;
             font-size: 14px;
             line-height: 1.6;
             flex: 1;
         }
-
         .review-product {
             background: #ede9fe;
             color: #7c3aed;
@@ -176,14 +201,12 @@
             font-weight: 700;
             align-self: flex-start;
         }
-
         @media (max-width: 900px) {
             .rating-header { grid-template-columns: 1fr; gap: 20px; padding: 25px; }
             .rating-summary { border-right: none; border-bottom: 2px dashed #e2e8f0; padding-bottom: 25px; }
             .reviews-grid { grid-template-columns: repeat(2, 1fr); }
             .rating-big { font-size: 60px; }
         }
-
         @media (max-width: 600px) {
             .reviews-grid { grid-template-columns: 1fr; }
             .rating-info h2 { font-size: 22px; }
@@ -201,41 +224,26 @@
             </a>
 
             <div class="search-box">
-    <input 
-        <div class="search-box" style="position:relative;">
-    <input 
-        type="text" 
-        id="searchInput" 
-        placeholder="Search mobile accessories..." 
-        oninput="liveSearch(this.value)"
-        autocomplete="off"
-    >
-    <button onclick="searchProducts()">
-        <i class="fa-solid fa-magnifying-glass"></i>
-    </button>
-    <div id="autocompleteBox" style="display:none; position:absolute; top:100%; left:0; right:0; background:white; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.15); margin-top:5px; z-index:1000; max-height:300px; overflow-y:auto;"></div>
-</div>
-        type="text" 
-        id="searchInput" 
-        placeholder="Search mobile accessories..." 
-        oninput="liveSearch(this.value)"
-        autocomplete="off"
-    >
-    <button onclick="searchProducts()">
-        <i class="fa-solid fa-magnifying-glass"></i>
-    </button>
-</div>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Search mobile accessories..." 
+                    oninput="liveSearch(this.value)"
+                    autocomplete="off"
+                >
+                <button onclick="searchProducts()">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <div id="autocompleteBox"></div>
+            </div>
 
             <div class="nav-icons">
                 <a href="track-order.html" title="Track Order" style="display:flex; align-items:center; gap:5px; text-decoration:none; color:#7c3aed; font-weight:600; font-size:13px;">
                     <i class="fa-solid fa-truck-fast"></i> <span class="track-text">Track</span>
-                    <a href="wishlist.html" title="Wishlist" style="position:relative; text-decoration:none; color:#111827;">
-    <i class="fa-regular fa-heart"></i>
-    <span id="wishlistCount" style="display:none; position:absolute; top:-8px; right:-10px; background:#ef4444; color:white; font-size:10px; width:18px; height:18px; border-radius:50%; align-items:center; justify-content:center; font-weight:700;">0</span>
-</a>
                 </a>
-                <a href="#" title="Wishlist">
+                <a href="wishlist.html" class="wishlist-icon" title="Wishlist">
                     <i class="fa-regular fa-heart"></i>
+                    <span id="wishlistCount" class="wishlist-count">0</span>
                 </a>
                 <a href="cart.html" class="cart-icon" title="Shopping Cart">
                     <i class="fa-solid fa-cart-shopping"></i>
@@ -251,8 +259,9 @@
             <a href="#">Home</a>
             <a href="#categories">Categories</a>
             <a href="#products">Products</a>
-            <a href="#reviews">Reviews</a>
             <a href="track-order.html">Track Order</a>
+            <a href="wishlist.html">Wishlist</a>
+            <a href="#reviews">Reviews</a>
             <a href="#about">About</a>
             <a href="#contact">Contact</a>
         </nav>
@@ -293,10 +302,11 @@
             </div>
 
             <div class="categories-grid" id="categoriesGrid">
-    <div style="grid-column:1/-1; text-align:center; padding:30px; color:#94a3b8;">
-        <i class="fa-solid fa-spinner fa-spin"></i> Loading categories...
-    </div>
-</div>
+                <div style="grid-column:1/-1; text-align:center; padding:30px; color:#94a3b8;">
+                    <i class="fa-solid fa-spinner fa-spin"></i> Loading categories...
+                </div>
+            </div>
+        </div>
     </section>
 
 
@@ -312,13 +322,14 @@
                     View All <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </div>
-<!-- Filter Status -->
-<div id="filterStatus" style="display:none; margin-bottom:20px; padding:12px 20px; background:#ede9fe; border-radius:10px; border:1px solid #c4b5fd; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
-    <span style="color:#6d28d9; font-weight:700; font-size:14px;" id="filterText"></span>
-    <button onclick="clearFilter()" style="background:#7c3aed; color:white; border:none; padding:6px 15px; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer;">
-        <i class="fa-solid fa-xmark"></i> Clear
-    </button>
-</div>
+
+            <div id="filterStatus" style="display:none; margin-bottom:20px; padding:12px 20px; background:#ede9fe; border-radius:10px; border:1px solid #c4b5fd; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                <span style="color:#6d28d9; font-weight:700; font-size:14px;" id="filterText"></span>
+                <button onclick="clearFilter()" style="background:#7c3aed; color:white; border:none; padding:6px 15px; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer;">
+                    <i class="fa-solid fa-xmark"></i> Clear
+                </button>
+            </div>
+
             <div class="products-grid" id="productsGrid"></div>
         </div>
     </section>
@@ -388,17 +399,16 @@
                 <a href="#" class="logo footer-logo">GEN.Z <span>GADGETS</span></a>
                 <p>Mobile accessories for the next generation.</p>
             </div>
-
             <div class="footer-links">
                 <h3>Quick Links</h3>
                 <a href="#">Home</a>
                 <a href="#products">Products</a>
                 <a href="#reviews">Reviews</a>
                 <a href="track-order.html">Track Order</a>
+                <a href="wishlist.html">Wishlist</a>
                 <a href="#about">About</a>
                 <a href="#contact">Contact</a>
             </div>
-
             <div class="footer-links">
                 <h3>Customer Support</h3>
                 <a href="#">Payment Help</a>
@@ -406,7 +416,6 @@
                 <a href="#">Return Policy</a>
             </div>
         </div>
-
         <div class="copyright">
             <p>© 2026 GEN.Z GADGETS. All rights reserved.</p>
         </div>
@@ -416,8 +425,7 @@
     <!-- ================= WHATSAPP ================= -->
     <a href="https://wa.me/923197745919?text=Assalam-o-Alaikum%20GEN.Z%20GADGETS%2C%20mujhe%20help%20chahiye."
        class="whatsapp-btn"
-       target="_blank"
-       aria-label="Contact GEN.Z GADGETS on WhatsApp">
+       target="_blank">
         <i class="fa-brands fa-whatsapp"></i>
         <span>WhatsApp Us</span>
     </a>
@@ -429,7 +437,7 @@
     <script src="js/script.js"></script>
 
     <script>
-        // Reviews loading
+        // ===== Reviews Loader =====
         function waitForFirebase(callback) {
             if (window.firebaseDB) callback();
             else setTimeout(function() { waitForFirebase(callback); }, 100);
@@ -497,22 +505,21 @@
             });
         }
 
+        // ===== Wishlist Badge Update =====
+        function updateWishlistBadge() {
+            const wishlist = JSON.parse(localStorage.getItem('genzWishlist')) || [];
+            const badge = document.getElementById('wishlistCount');
+            if (badge) {
+                badge.textContent = wishlist.length;
+                if (wishlist.length > 0) badge.classList.add('show');
+                else badge.classList.remove('show');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(loadReviews, 500);
+            setTimeout(loadReviews, 800);
+            setTimeout(updateWishlistBadge, 300);
         });
-        .autocomplete-item {
-    padding: 12px 15px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border-bottom: 1px solid #f1f5f9;
-    transition: 0.2s;
-}
-.autocomplete-item:last-child { border-bottom: none; }
-.autocomplete-item:hover { background: #f8fafc; }
-.autocomplete-item span { flex: 1; font-size: 14px; color: #111827; }
-.autocomplete-item small { font-size: 11px; }
     </script>
 
 </body>
