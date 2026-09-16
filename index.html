@@ -7,12 +7,14 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        /* ===== GLOBAL BLACK THEME ===== */
+        /* ===== LIGHT BLACK THEME ===== */
         :root {
-            --bg-dark: #0a0a0a;
-            --bg-darker: #050505;
-            --card-bg: #141414;
-            --border-dark: #262626;
+            --bg-dark: #1a1a1a;
+            --bg-darker: #141414;
+            --bg-light: #1f1f1f;
+            --card-bg: #222222;
+            --card-hover: #2a2a2a;
+            --border-dark: #333333;
             --text-light: #f5f5f5;
             --text-muted: #a3a3a3;
             --purple: #7c3aed;
@@ -20,16 +22,15 @@
             --cyan: #06b6d4;
         }
 
-        * { transition: background-color 0.3s ease, color 0.3s ease; }
+        * { transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease; }
 
-        /* ===== BODY BACKGROUND ===== */
         body {
             background: var(--bg-dark);
             color: var(--text-light);
             min-height: 100vh;
         }
 
-        /* Animated Grid Background */
+        /* Subtle background glow */
         body::before {
             content: '';
             position: fixed;
@@ -38,68 +39,46 @@
             right: 0;
             bottom: 0;
             background-image: 
-                radial-gradient(circle at 20% 30%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
-                linear-gradient(rgba(124, 58, 237, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(124, 58, 237, 0.03) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 50px 50px, 50px 50px;
+                radial-gradient(circle at 15% 20%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.06) 0%, transparent 50%);
             z-index: -1;
             pointer-events: none;
         }
 
-        /* ===== HEADER BLACK THEME ===== */
+        /* ===== HEADER ===== */
         .header {
-            background: rgba(10, 10, 10, 0.95) !important;
+            background: rgba(20, 20, 20, 0.95) !important;
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border-dark) !important;
         }
 
-        .navbar { min-height: 80px; }
+        .navbar { min-height: 75px; }
 
-        /* ===== PROFESSIONAL LOGO ===== */
+        /* ===== CUSTOM LOGO ===== */
         .logo {
             display: flex;
             align-items: center;
             gap: 12px;
             text-decoration: none;
             color: white !important;
-            font-size: 22px;
-            font-weight: 900;
-            letter-spacing: -1px;
-            transition: transform 0.3s;
         }
-        .logo:hover { transform: scale(1.02); }
 
         .logo-icon {
-            width: 45px;
-            height: 45px;
+            width: 44px;
+            height: 44px;
             border-radius: 12px;
             background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
             position: relative;
-            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
-            overflow: hidden;
         }
-        .logo-icon::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: shine 3s infinite;
-        }
-        @keyframes shine {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-        }
+
+        /* Custom SVG Logo - "GZ" monogram */
         .logo-icon svg {
-            width: 28px;
-            height: 28px;
-            z-index: 1;
+            width: 26px;
+            height: 26px;
         }
 
         .logo-text {
@@ -107,21 +86,23 @@
             flex-direction: column;
             line-height: 1;
         }
+
         .logo-text .genz {
-            font-size: 20px;
+            font-size: 19px;
             font-weight: 900;
             color: white;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
         }
+
         .logo-text .gadgets {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             color: #a78bfa;
             letter-spacing: 4px;
-            margin-top: 2px;
+            margin-top: 3px;
         }
 
-        /* ===== SEARCH BOX BLACK ===== */
+        /* ===== SEARCH BOX ===== */
         .search-box {
             background: var(--card-bg) !important;
             border: 1px solid var(--border-dark) !important;
@@ -139,20 +120,16 @@
         /* ===== NAV ICONS ===== */
         .nav-icons a {
             color: white !important;
-            transition: color 0.3s;
         }
         .nav-icons a:hover { color: #a78bfa !important; }
 
-        /* ===== HERO BLACK THEME ===== */
-        .hero {
-            background: transparent !important;
-            position: relative;
-        }
+        /* ===== HERO ===== */
+        .hero { background: transparent !important; }
         .hero::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 70% 50%, rgba(124, 58, 237, 0.2), transparent 60%);
+            background: radial-gradient(circle at 70% 50%, rgba(124, 58, 237, 0.12), transparent 60%);
             pointer-events: none;
         }
         .hero h1 { color: white !important; }
@@ -162,9 +139,13 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .hero-text > p:not(.small-title) { color: #a3a3a3 !important; }
+        .hero-text > p:not(.small-title) { color: #b0b0b0 !important; }
+        .hero-circle {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.3), rgba(6, 182, 212, 0.3)) !important;
+            box-shadow: 0 25px 80px rgba(124, 58, 237, 0.2) !important;
+        }
 
-        /* ===== SECTIONS BLACK ===== */
+        /* ===== SECTIONS ===== */
         .categories-section,
         .products-section,
         .about-section,
@@ -175,31 +156,33 @@
         .section-heading h2 { color: white !important; }
         .section-heading > a { color: #a78bfa !important; }
 
-        /* ===== CATEGORY CARDS BLACK ===== */
+        /* ===== CATEGORY CARDS ===== */
         .category-card {
             background: var(--card-bg) !important;
             border: 1px solid var(--border-dark) !important;
         }
         .category-card:hover {
+            background: var(--card-hover) !important;
             border-color: var(--purple) !important;
-            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.2) !important;
-            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.15) !important;
+            transform: translateY(-4px);
         }
         .category-card h3 { color: white !important; }
         .category-card p { color: var(--text-muted) !important; }
         .category-icon {
-            background: rgba(124, 58, 237, 0.15) !important;
+            background: rgba(124, 58, 237, 0.12) !important;
             color: #a78bfa !important;
         }
 
-        /* ===== PRODUCT CARDS BLACK ===== */
+        /* ===== PRODUCT CARDS ===== */
         .product-card {
             background: var(--card-bg) !important;
             border: 1px solid var(--border-dark) !important;
         }
         .product-card:hover {
+            background: var(--card-hover) !important;
             border-color: var(--purple) !important;
-            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.2) !important;
+            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.15) !important;
         }
         .product-image { background: #1a1a1a !important; }
         .product-info h3 { color: white !important; }
@@ -211,11 +194,10 @@
             color: white !important;
         }
         .add-cart-btn:hover {
-            transform: scale(1.02);
             box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);
         }
 
-        /* ===== RATING SECTION BLACK ===== */
+        /* ===== RATING SECTION ===== */
         .rating-header {
             background: var(--card-bg) !important;
             border: 1px solid var(--border-dark) !important;
@@ -224,17 +206,42 @@
         .rating-count { color: var(--text-muted) !important; }
         .rating-info h2 { color: white !important; }
         .rating-info p { color: var(--text-muted) !important; }
+        .rating-big { color: #a78bfa !important; }
 
         .review-card {
             background: var(--card-bg) !important;
             border: 1px solid var(--border-dark) !important;
         }
+        .review-card:hover {
+            background: var(--card-hover) !important;
+        }
         .review-name strong { color: white !important; }
+        .review-name small { color: #8a8a8a !important; }
         .review-text { color: #d4d4d4 !important; }
+        .review-loading { color: var(--text-muted) !important; }
 
-        /* ===== PROMO BLACK ===== */
+        /* See More Button */
+        .see-more-btn {
+            display: block;
+            margin: 25px auto 0;
+            padding: 12px 30px;
+            background: transparent;
+            color: #a78bfa;
+            border: 2px solid #7c3aed;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .see-more-btn:hover {
+            background: #7c3aed;
+            color: white;
+        }
+
+        /* ===== PROMO ===== */
         .promo-box {
-            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%) !important;
+            background: linear-gradient(135deg, #222222 0%, #1a1a1a 100%) !important;
             border: 1px solid var(--border-dark);
             position: relative;
             overflow: hidden;
@@ -246,15 +253,15 @@
             right: -20%;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(124, 58, 237, 0.3), transparent 70%);
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.15), transparent 70%);
             border-radius: 50%;
         }
         .promo-box h2 { color: white !important; }
         .promo-box p { color: var(--text-muted) !important; }
 
-        /* ===== ABOUT BLACK ===== */
+        /* ===== ABOUT ===== */
         .about-section {
-            background: linear-gradient(135deg, #0a0a0a, #141414) !important;
+            background: linear-gradient(135deg, #1a1a1a, #222222) !important;
             border-top: 1px solid var(--border-dark);
             border-bottom: 1px solid var(--border-dark);
         }
@@ -272,8 +279,8 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.15));
-            border: 1px solid rgba(124, 58, 237, 0.4);
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(6, 182, 212, 0.12));
+            border: 1px solid rgba(124, 58, 237, 0.35);
             padding: 8px 18px;
             border-radius: 30px;
             margin-top: 20px;
@@ -283,7 +290,7 @@
         }
         .owner-badge i { color: #f59e0b; }
 
-        /* ===== FOOTER BLACK ===== */
+        /* ===== FOOTER ===== */
         .footer {
             background: var(--bg-darker) !important;
             border-top: 1px solid var(--border-dark);
@@ -295,25 +302,25 @@
         .footer-logo { color: white !important; }
 
         .copyright {
-            background: #000 !important;
+            background: #0a0a0a !important;
             border-top: 1px solid var(--border-dark);
+            padding: 25px 20px;
         }
-        .copyright p { color: #737373 !important; }
+        .copyright p { color: #737373 !important; font-size: 13px; }
         .copyright strong { color: #a78bfa; }
 
         /* ===== SEARCH AUTOCOMPLETE ===== */
-        .search-box { position: relative; }
         .autocomplete-item {
             padding: 12px 15px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 10px;
-            border-bottom: 1px solid #1a1a1a;
+            border-bottom: 1px solid #2a2a2a;
             transition: 0.2s;
         }
         .autocomplete-item:last-child { border-bottom: none; }
-        .autocomplete-item:hover { background: #1a1a1a; }
+        .autocomplete-item:hover { background: #2a2a2a; }
         .autocomplete-item span { flex: 1; font-size: 14px; color: white; }
         .autocomplete-item small { font-size: 11px; color: #a78bfa; font-weight: 700; }
         #autocompleteBox {
@@ -355,17 +362,16 @@
         .primary-btn {
             background: linear-gradient(135deg, #7c3aed, #06b6d4) !important;
             color: white !important;
-            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.25);
         }
         .primary-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.5);
+            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.4);
         }
 
         /* ===== WHATSAPP ===== */
         .whatsapp-btn {
             background: linear-gradient(135deg, #25D366, #128C7E) !important;
-            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4) !important;
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.35) !important;
         }
 
         /* ===== MOBILE MENU ===== */
@@ -396,11 +402,10 @@
         <div class="container navbar">
             <a href="index.html" class="logo">
                 <div class="logo-icon">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7 2L3 6V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V6L17 2H7Z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
-                        <circle cx="12" cy="13" r="3" stroke="white" stroke-width="2"/>
-                        <path d="M7 2V6H3" stroke="white" stroke-width="2" stroke-linejoin="round"/>
-                        <path d="M17 2V6H21" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                    <!-- Custom GZ Monogram Logo -->
+                    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 4H8C5.79086 4 4 5.79086 4 8V24C4 26.2091 5.79086 28 8 28H12C14.2091 28 16 26.2091 16 24V18H11V14H20V24C20 28.4183 16.4183 32 12 32H8C3.58172 32 0 28.4183 0 24V8C0 3.58172 3.58172 0 8 0H12C16.4183 0 20 3.58172 20 8V9H15V8C15 6.89543 14.1046 6 13 6H8C6.89543 6 6 6.89543 6 8V24C6 25.1046 6.89543 26 8 26H12C13.1046 26 14 25.1046 14 24V20H11V16H18V24C18 26.2091 16.2091 28 14 28" fill="white" transform="scale(0.9) translate(2,2)"/>
+                        <path d="M22 4L25 14L28 4H32L27 18V28H24V18L19 4H22Z" fill="white" transform="scale(0.9) translate(2,2)"/>
                     </svg>
                 </div>
                 <div class="logo-text">
@@ -509,7 +514,7 @@
                 </a>
             </div>
 
-            <div id="filterStatus" style="display:none; margin-bottom:20px; padding:12px 20px; background:rgba(124,58,237,0.15); border-radius:10px; border:1px solid rgba(124,58,237,0.4); align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+            <div id="filterStatus" style="display:none; margin-bottom:20px; padding:12px 20px; background:rgba(124,58,237,0.12); border-radius:10px; border:1px solid rgba(124,58,237,0.35); align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
                 <span style="color:#a78bfa; font-weight:700; font-size:14px;" id="filterText"></span>
                 <button onclick="clearFilter()" style="background:linear-gradient(135deg,#7c3aed,#06b6d4); color:white; border:none; padding:6px 15px; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer;">
                     <i class="fa-solid fa-xmark"></i> Clear
@@ -543,6 +548,7 @@
                     <i class="fa-solid fa-spinner fa-spin"></i> Loading reviews...
                 </div>
             </div>
+            <div id="seeMoreContainer" style="text-align:center;"></div>
         </div>
     </section>
 
@@ -566,10 +572,6 @@
             <div>
                 <p class="small-title">ABOUT US</p>
                 <h2>Your Everyday <span>Tech Store.</span></h2>
-                <div class="owner-badge">
-                    <i class="fa-solid fa-crown"></i>
-                    <span>Founded by <strong style="color:white;">INTASAM ALI</strong></span>
-                </div>
             </div>
             <p>
                 GEN.Z GADGETS is a Pakistan-based online store
@@ -589,11 +591,9 @@
             <div>
                 <a href="#" class="logo footer-logo" style="margin-bottom:15px;">
                     <div class="logo-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7 2L3 6V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V6L17 2H7Z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
-                            <circle cx="12" cy="13" r="3" stroke="white" stroke-width="2"/>
-                            <path d="M7 2V6H3" stroke="white" stroke-width="2" stroke-linejoin="round"/>
-                            <path d="M17 2V6H21" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 4H8C5.79086 4 4 5.79086 4 8V24C4 26.2091 5.79086 28 8 28H12C14.2091 28 16 26.2091 16 24V18H11V14H20V24C20 28.4183 16.4183 32 12 32H8C3.58172 32 0 28.4183 0 24V8C0 3.58172 3.58172 0 8 0H12C16.4183 0 20 3.58172 20 8V9H15V8C15 6.89543 14.1046 6 13 6H8C6.89543 6 6 6.89543 6 8V24C6 25.1046 6.89543 26 8 26H12C13.1046 26 14 25.1046 14 24V20H11V16H18V24C18 26.2091 16.2091 28 14 28" fill="white" transform="scale(0.9) translate(2,2)"/>
+                            <path d="M22 4L25 14L28 4H32L27 18V28H24V18L19 4H22Z" fill="white" transform="scale(0.9) translate(2,2)"/>
                         </svg>
                     </div>
                     <div class="logo-text">
@@ -602,9 +602,6 @@
                     </div>
                 </a>
                 <p>Mobile accessories for the next generation.</p>
-                <p style="margin-top:15px; color:#a78bfa; font-weight:700; font-size:13px;">
-                    <i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Owned by INTASAM ALI
-                </p>
             </div>
             <div class="footer-links">
                 <h3>Quick Links</h3>
@@ -624,7 +621,8 @@
             </div>
         </div>
         <div class="copyright">
-            <p>© 2026 <strong>GEN.Z GADGETS</strong> — Owned by <strong>INTASAM ALI</strong>. All rights reserved.</p>
+            <p>© 2026 GEN.Z GADGETS. All rights reserved.</p>
+            <p style="margin-top:8px; font-size:12px;">Proudly Owned & Founded by <strong>INTASAM ALI</strong></p>
         </div>
     </footer>
 
@@ -644,6 +642,10 @@
     <script src="js/script.js"></script>
 
     <script>
+        let allReviewsData = [];
+        let reviewsShown = 2;
+        const reviewsPerPage = 2;
+
         function waitForFirebase(callback) {
             if (window.firebaseDB) callback();
             else setTimeout(function() { waitForFirebase(callback); }, 100);
@@ -654,47 +656,79 @@
                 try {
                     const { db, collection, getDocs } = window.firebaseDB;
                     const snapshot = await getDocs(collection(db, 'reviews'));
-                    const reviews = [];
-                    snapshot.forEach(function(doc) { reviews.push(doc.data()); });
-                    reviews.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+                    allReviewsData = [];
+                    snapshot.forEach(function(doc) { allReviewsData.push(doc.data()); });
+                    allReviewsData.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
 
                     let totalRating = 0;
-                    reviews.forEach(function(r) { totalRating += r.rating; });
-                    const avgRating = reviews.length > 0 ? (totalRating / reviews.length).toFixed(1) : '0.0';
+                    allReviewsData.forEach(function(r) { totalRating += r.rating; });
+                    const avgRating = allReviewsData.length > 0 ? (totalRating / allReviewsData.length).toFixed(1) : '0.0';
 
                     document.getElementById('storeRatingBig').textContent = avgRating;
-                    document.getElementById('storeRatingCount').textContent = reviews.length + ' review' + (reviews.length !== 1 ? 's' : '');
+                    document.getElementById('storeRatingCount').textContent = allReviewsData.length + ' review' + (allReviewsData.length !== 1 ? 's' : '');
 
                     const fullStars = Math.round(avgRating);
                     let starsHTML = '';
                     for (let i = 1; i <= 5; i++) starsHTML += i <= fullStars ? '★' : '☆';
                     document.getElementById('storeRatingStars').textContent = starsHTML;
 
-                    const grid = document.getElementById('reviewsGrid');
-                    if (reviews.length === 0) {
-                        grid.innerHTML = '<div class="review-loading">Koi review nahi hai. Pehla review aap likhein!</div>';
-                        return;
-                    }
-
-                    grid.innerHTML = reviews.slice(0, 6).map(function(r) {
-                        const initials = r.name.split(' ').map(function(n) { return n[0]; }).join('').toUpperCase().slice(0, 2);
-                        const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
-                        const dateStr = new Date(r.date).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' });
-
-                        return '<div class="review-card">' +
-                            '<div class="review-top">' +
-                                '<div class="review-avatar">' + initials + '</div>' +
-                                '<div class="review-name"><strong>' + r.name + '</strong><small>' + dateStr + '</small></div>' +
-                            '</div>' +
-                            '<div class="review-stars">' + stars + '</div>' +
-                            '<div class="review-text">' + r.text + '</div>' +
-                            (r.productName && r.productName !== 'Store' ? '<div class="review-product">📦 ' + r.productName + '</div>' : '') +
-                        '</div>';
-                    }).join('');
+                    renderReviewCards();
                 } catch (error) {
                     console.error('Reviews load error:', error);
                 }
             });
+        }
+
+        function renderReviewCards() {
+            const grid = document.getElementById('reviewsGrid');
+            const seeMoreContainer = document.getElementById('seeMoreContainer');
+
+            if (allReviewsData.length === 0) {
+                grid.innerHTML = '<div class="review-loading">Koi review nahi hai. Pehla review aap likhein!</div>';
+                seeMoreContainer.innerHTML = '';
+                return;
+            }
+
+            const visibleReviews = allReviewsData.slice(0, reviewsShown);
+
+            grid.innerHTML = visibleReviews.map(function(r) {
+                const initials = r.name.split(' ').map(function(n) { return n[0]; }).join('').toUpperCase().slice(0, 2);
+                const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+                const dateStr = new Date(r.date).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' });
+
+                return '<div class="review-card">' +
+                    '<div class="review-top">' +
+                        '<div class="review-avatar">' + initials + '</div>' +
+                        '<div class="review-name"><strong>' + r.name + '</strong><small>' + dateStr + '</small></div>' +
+                    '</div>' +
+                    '<div class="review-stars">' + stars + '</div>' +
+                    '<div class="review-text">' + r.text + '</div>' +
+                    (r.productName && r.productName !== 'Store' ? '<div class="review-product">📦 ' + r.productName + '</div>' : '') +
+                '</div>';
+            }).join('');
+
+            // See More / See Less button
+            if (allReviewsData.length > reviewsPerPage) {
+                if (reviewsShown < allReviewsData.length) {
+                    seeMoreContainer.innerHTML = '<button class="see-more-btn" onclick="seeMoreReviews()">See More Reviews <i class="fa-solid fa-chevron-down"></i></button>';
+                } else {
+                    seeMoreContainer.innerHTML = '<button class="see-more-btn" onclick="seeLessReviews()">Show Less <i class="fa-solid fa-chevron-up"></i></button>';
+                }
+            } else {
+                seeMoreContainer.innerHTML = '';
+            }
+        }
+
+        function seeMoreReviews() {
+            reviewsShown = allReviewsData.length;
+            renderReviewCards();
+        }
+
+        function seeLessReviews() {
+            reviewsShown = reviewsPerPage;
+            renderReviewCards();
+            const reviewsSection = document.getElementById('reviews');
+            if (reviewsSection) reviewsSection.scrollIntoView({ behavior: 'smooth' });
         }
 
         function updateWishlistBadge() {
