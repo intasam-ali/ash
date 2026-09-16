@@ -175,9 +175,7 @@
         }
 
         /* ===== STORE RATING SECTION ===== */
-        .store-rating-section {
-            padding: 70px 0;
-        }
+        .store-rating-section { padding: 70px 0; }
 
         /* Rating Header */
         .rating-header {
@@ -246,7 +244,7 @@
             box-shadow: 0 8px 25px rgba(124, 58, 237, 0.35);
         }
 
-        /* Reviews Grid - 3 Columns */
+        /* Reviews Grid */
         .reviews-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -641,7 +639,7 @@
                 <div class="rating-summary">
                     <div class="rating-big" id="storeRatingBig">0.0</div>
                     <div class="rating-stars" id="storeRatingStars">☆☆☆☆☆</div>
-                    <div class="rating-count" id="storeRatingCount">0 reviews</div>
+                    <div class="rating-count" id="storeRatingCount">Loading...</div>
                 </div>
                 <div class="rating-info">
                     <h2>Customer Reviews</h2>
@@ -744,56 +742,85 @@
     </a>
 
 
-    <!-- ================= JAVASCRIPT ================= -->
+    <!-- ================= SCRIPTS ================= -->
+
+    <!-- Firebase + Products + Main Script -->
     <script type="module" src="js/firebase.js"></script>
     <script src="js/products.js"></script>
     <script src="js/script.js"></script>
 
-    <script>
+    <!-- Reviews Loader (Direct Firebase) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZRn0KADLkLTexwzOpnqR-VKzRqQKPUGY",
+            authDomain: "genz-gadgets.firebaseapp.com",
+            projectId: "genz-gadgets",
+            storageBucket: "genz-gadgets.firebasestorage.app",
+            messagingSenderId: "473246555348",
+            appId: "1:473246555348:web:9944b3fc49a8a57e966f41"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         let allReviewsData = [];
         let reviewsShown = 2;
         const reviewsPerPage = 2;
 
-        function waitForFirebase(callback) {
-            if (window.firebaseDB) callback();
-            else setTimeout(function() { waitForFirebase(callback); }, 100);
-        }
-
         async function loadReviews() {
-            waitForFirebase(async function() {
-                try {
-                    const { db, collection, getDocs } = window.firebaseDB;
-                    const snapshot = await getDocs(collection(db, 'reviews'));
-                    allReviewsData = [];
-                    snapshot.forEach(function(doc) { allReviewsData.push(doc.data()); });
-                    allReviewsData.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+            try {
+                console.log('📥 Loading reviews...');
+                const snapshot = await getDocs(collection(db, 'reviews'));
+                allReviewsData = [];
+                snapshot.forEach(function(doc) { 
+                    allReviewsData.push(doc.data()); 
+                });
+                allReviewsData.sort(function(a, b) { 
+                    return new Date(b.date) - new Date(a.date); 
+                });
+                console.log('✅ Reviews loaded:', allReviewsData.length);
 
-                    let totalRating = 0;
-                    allReviewsData.forEach(function(r) { totalRating += r.rating; });
-                    const avgRating = allReviewsData.length > 0 ? (totalRating / allReviewsData.length).toFixed(1) : '0.0';
+                let totalRating = 0;
+                allReviewsData.forEach(function(r) { totalRating += r.rating; });
+                const avgRating = allReviewsData.length > 0 ? (totalRating / allReviewsData.length).toFixed(1) : '0.0';
 
-                    document.getElementById('storeRatingBig').textContent = avgRating;
-                    document.getElementById('storeRatingCount').textContent = allReviewsData.length + ' review' + (allReviewsData.length !== 1 ? 's' : '');
+                const ratingBig = document.getElementById('storeRatingBig');
+                const ratingCount = document.getElementById('storeRatingCount');
+                const ratingStars = document.getElementById('storeRatingStars');
 
+                if (ratingBig) ratingBig.textContent = avgRating;
+                if (ratingCount) ratingCount.textContent = allReviewsData.length + ' review' + (allReviewsData.length !== 1 ? 's' : '');
+                if (ratingStars) {
                     const fullStars = Math.round(avgRating);
                     let starsHTML = '';
                     for (let i = 1; i <= 5; i++) starsHTML += i <= fullStars ? '★' : '☆';
-                    document.getElementById('storeRatingStars').textContent = starsHTML;
-
-                    renderReviewCards();
-                } catch (error) {
-                    console.error('Reviews load error:', error);
+                    ratingStars.textContent = starsHTML;
                 }
-            });
+
+                renderReviewCards();
+            } catch (error) {
+                console.error('❌ Reviews error:', error);
+                const grid = document.getElementById('reviewsGrid');
+                if (grid) {
+                    grid.innerHTML = '<div class="review-loading" style="color:#ef4444;">Reviews load nahi ho sake</div>';
+                }
+                const rc = document.getElementById('storeRatingCount');
+                if (rc) rc.textContent = 'Error';
+            }
         }
 
         function renderReviewCards() {
             const grid = document.getElementById('reviewsGrid');
             const seeMoreContainer = document.getElementById('seeMoreContainer');
 
+            if (!grid) return;
+
             if (allReviewsData.length === 0) {
                 grid.innerHTML = '<div class="review-loading">Koi review nahi hai. Pehla review aap likhein!</div>';
-                seeMoreContainer.innerHTML = '';
+                if (seeMoreContainer) seeMoreContainer.innerHTML = '';
                 return;
             }
 
@@ -810,4 +837,56 @@
                         '<div class="review-name"><strong>' + r.name + '</strong><small>' + dateStr + '</small></div>' +
                     '</div>' +
                     '<div class="review-stars">' + stars + '</div>' +
-                    '<div class="review-text">' +
+                    '<div class="review-text">' + r.text + '</div>' +
+                    (r.productName && r.productName !== 'Store' ? '<div class="review-product">📦 ' + r.productName + '</div>' : '<div class="review-product">🏪 Store Review</div>') +
+                '</div>';
+            }).join('');
+
+            if (seeMoreContainer) {
+                if (allReviewsData.length > reviewsPerPage) {
+                    if (reviewsShown < allReviewsData.length) {
+                        seeMoreContainer.innerHTML = '<button class="see-more-btn" id="seeMoreBtn">See More Reviews <i class="fa-solid fa-chevron-down"></i></button>';
+                    } else {
+                        seeMoreContainer.innerHTML = '<button class="see-more-btn" id="seeLessBtn">Show Less <i class="fa-solid fa-chevron-up"></i></button>';
+                    }
+                    setTimeout(function() {
+                        const moreBtn = document.getElementById('seeMoreBtn');
+                        const lessBtn = document.getElementById('seeLessBtn');
+                        if (moreBtn) moreBtn.onclick = function() { reviewsShown = allReviewsData.length; renderReviewCards(); };
+                        if (lessBtn) lessBtn.onclick = function() {
+                            reviewsShown = reviewsPerPage;
+                            renderReviewCards();
+                            const r = document.getElementById('reviews');
+                            if (r) r.scrollIntoView({ behavior: 'smooth' });
+                        };
+                    }, 50);
+                } else {
+                    seeMoreContainer.innerHTML = '';
+                }
+            }
+        }
+
+        function updateWishlistBadge() {
+            const wishlist = JSON.parse(localStorage.getItem('genzWishlist')) || [];
+            const badge = document.getElementById('wishlistCount');
+            if (badge) {
+                badge.textContent = wishlist.length;
+                if (wishlist.length > 0) badge.classList.add('show');
+                else badge.classList.remove('show');
+            }
+        }
+
+        // Load on page ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(loadReviews, 500);
+                setTimeout(updateWishlistBadge, 300);
+            });
+        } else {
+            setTimeout(loadReviews, 500);
+            setTimeout(updateWishlistBadge, 300);
+        }
+    </script>
+
+</body>
+</html>
