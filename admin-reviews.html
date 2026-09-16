@@ -12,10 +12,12 @@
         .header-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .logo { font-size: 20px; font-weight: 900; text-decoration: none; color: #111827; }
         .logo span { color: #7c3aed; }
-        .nav-links { display: flex; gap: 12px; align-items: center; }
+        .nav-links { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
         .nav-links a { color: #64748b; text-decoration: none; font-weight: 600; padding: 8px 15px; border-radius: 8px; font-size: 14px; }
         .nav-links a:hover { background: #f1f5f9; color: #111827; }
         .nav-links a.active { background: #ede9fe; color: #7c3aed; }
+        .nav-links a.logout { color: #dc2626; }
+        .nav-links a.logout:hover { background: #fee2e2; }
         .container { max-width: 1200px; margin: 0 auto; padding: 25px 20px; }
         .page-title { font-size: 26px; color: #111827; margin-bottom: 5px; }
         .page-subtitle { color: #64748b; margin-bottom: 25px; }
@@ -78,7 +80,9 @@
                 <a href="admin-mobile.html"><i class="fa-solid fa-box"></i> Products</a>
                 <a href="admin-orders.html"><i class="fa-solid fa-receipt"></i> Orders</a>
                 <a href="admin-reviews.html" class="active"><i class="fa-solid fa-star"></i> Reviews</a>
+                <a href="admin-categories.html"><i class="fa-solid fa-layer-group"></i> Categories</a>
                 <a href="index.html"><i class="fa-solid fa-store"></i> Store</a>
+                <a href="#" onclick="logoutAdmin()" class="logout"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
             </div>
         </div>
     </header>
@@ -98,6 +102,30 @@
             </div>
         </div>
     </div>
+
+    <!-- ===== AUTH CHECK ===== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZRn0KADLkLTexwzOpnqR-VKzRqQKPUGY",
+            authDomain: "genz-gadgets.firebaseapp.com",
+            projectId: "genz-gadgets",
+            storageBucket: "genz-gadgets.firebasestorage.app",
+            messagingSenderId: "473246555348",
+            appId: "1:473246555348:web:9944b3fc49a8a57e966f41"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        onAuthStateChanged(auth, function(user) {
+            if (!user) {
+                window.location.href = 'admin-login.html';
+            }
+        });
+    </script>
 
     <script type="module" src="js/firebase.js"></script>
     <script>
@@ -216,8 +244,18 @@
             }
         }
 
+        function logoutAdmin() {
+            if (!confirm('Logout karna chahte hain?')) return;
+            import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js').then(function(module) {
+                const auth = module.getAuth();
+                module.signOut(auth).then(function() {
+                    window.location.href = 'admin-login.html';
+                });
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(loadReviews, 500);
+            setTimeout(loadReviews, 800);
         });
     </script>
 </body>
